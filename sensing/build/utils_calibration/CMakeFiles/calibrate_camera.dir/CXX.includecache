@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/Downloads/aruco304/utils_calibration/calibrate_camera.cpp
+opencv2/highgui.hpp
+-
+opencv2/calib3d.hpp
+-
+opencv2/aruco.hpp
+-
+opencv2/imgproc.hpp
+-
+vector
+-
+iostream
+-
+ctime
+-
+

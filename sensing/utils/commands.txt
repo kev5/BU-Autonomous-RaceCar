@@ -1,0 +1,6 @@
+
+Running Aruco Program 
+./aruco_test live -c out_camera_calibration1.yml -s 0.035
+
+Calibration Camera
+./aruco_calibration live out_camera_calibration1.yml -s 0.035

@@ -1,0 +1,10 @@
+
+libdir=/home/nvidia/Downloads/aruco304/build
+includedir=/home/nvidia/Downloads/aruco304/src
+
+Name: aruco
+Description: ArUco: a minimal library for Augmented Reality applications based on OpenCv, uninstalled Version.
+Version: 3.0.4
+Requires: opencv >= 2.1.0
+Libs: -L${libdir} -laruco
+Cflags: -I${includedir}

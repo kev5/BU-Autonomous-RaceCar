@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../src/aruco_export.h
+
+../src/marker.h
+aruco_export.h
+../src/aruco_export.h
+opencv2/core.hpp
+-
+cstdint
+-
+iostream
+-
+vector
+-
+
+../src/markermap.h
+aruco_export.h
+../src/aruco_export.h
+marker.h
+../src/marker.h
+opencv2/core.hpp
+-
+string
+-
+vector
+-
+
+/home/nvidia/Downloads/aruco304/utils_markermap/aruco_markermap_pix2meters.cpp
+markermap.h
+/home/nvidia/Downloads/aruco304/utils_markermap/markermap.h
+iostream
+-
+

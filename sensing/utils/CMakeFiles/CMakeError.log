@@ -1,0 +1,56 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_5f7f5/fast"
+/usr/bin/make -f CMakeFiles/cmTC_5f7f5.dir/build.make CMakeFiles/cmTC_5f7f5.dir/build
+make[1]: Entering directory '/home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5f7f5.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++      -o CMakeFiles/cmTC_5f7f5.dir/CheckSymbolExists.cxx.o -c /home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Linking CXX executable cmTC_5f7f5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5f7f5.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_5f7f5.dir/CheckSymbolExists.cxx.o  -o cmTC_5f7f5 -rdynamic 
+CMakeFiles/cmTC_5f7f5.dir/CheckSymbolExists.cxx.o: In function `main':
+CheckSymbolExists.cxx:(.text+0x14): undefined reference to `pthread_create'
+CheckSymbolExists.cxx:(.text+0x18): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_5f7f5.dir/build.make:97: recipe for target 'cmTC_5f7f5' failed
+make[1]: *** [cmTC_5f7f5] Error 1
+make[1]: Leaving directory '/home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_5f7f5/fast' failed
+make: *** [cmTC_5f7f5/fast] Error 2
+
+File /home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_35347/fast"
+/usr/bin/make -f CMakeFiles/cmTC_35347.dir/build.make CMakeFiles/cmTC_35347.dir/build
+make[1]: Entering directory '/home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_35347.dir/CheckFunctionExists.cxx.o
+/usr/bin/c++     -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_35347.dir/CheckFunctionExists.cxx.o -c /home/nvidia/Downloads/aruco304/utils/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_35347
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_35347.dir/link.txt --verbose=1
+/usr/bin/c++    -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_35347.dir/CheckFunctionExists.cxx.o  -o cmTC_35347 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_35347.dir/build.make:97: recipe for target 'cmTC_35347' failed
+make[1]: *** [cmTC_35347] Error 1
+make[1]: Leaving directory '/home/nvidia/Downloads/aruco304/utils/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_35347/fast' failed
+make: *** [cmTC_35347/fast] Error 2
+
+
