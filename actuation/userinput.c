@@ -8,80 +8,82 @@
 #define DEV_PATH  "/dev/PWM_OUT"
 #include <stdlib.h>
 #include "shared_def.h"
+#include <semaphore.h>
 
+#define SERVOSEM "/servosemaphore"
 #define SHM_SIZE 4096
 
 int main()
 {
+    sem_t *sem = sem_open(SERVOSEM, 1);
+    if (sem == SEM_FAILED){
+        perror("semaphore open error in userinput\n");
+    }
 
-       int c;
-       initscr();  // creates interface
-       cbreak(); // Allows user to exit
-       // echo(); // Echoes commands
-       keypad(stdscr, TRUE); // stdscr default window
-       nodelay(stdscr, TRUE);
-       printf("use arrow keys to control throttle and steering!\n");
-	
-       int fid = shm_open("racecar", O_RDWR, 0666);
-       if (fid == -1){
-		perror("shm_open error\n");
-		return -1;
-       }
+    int c;
+    initscr();  // creates interface
+    cbreak(); // Allows user to exit
+    echo(); // Echoes commands
+    keypad(stdscr, TRUE); // stdscr default window
+    nodelay(stdscr, TRUE);
+    printf("use arrow keys to control throttle and steering!\n");
 
-       void *ptr = mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
-       if (ptr == MAP_FAILED){
-		perror("mmap error\n");
-		exit(-1);
-       }
+    int fid = shm_open("racecar", O_RDWR, 0666);
+    if (fid == -1){
+        perror("shm_open error\n");
+        return -1;
+    }
 
-       struct throttle_steer *moveptr = (struct throttle_steer *)ptr;
-       
-       int prev_key = ERR;
-       unsigned long err_cnt = 0;
+    void *ptr = mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
+    if (ptr == MAP_FAILED){
+        perror("mmap error\n");
+        exit(-1);
+    }
 
-       while(1) {
-	  int c = getch();
-		
-		switch (c) {
-			case KEY_UP: // pressing up arrow makes car goes forwards
-				moveptr->throttle = 1;
-				printf("%f\n",moveptr->throttle);
-				prev_key = c;
-				break;
-			case KEY_DOWN: //makes the car go backwards 
-				moveptr->throttle = -1;
-				printf("%f\n",moveptr->throttle);
-				prev_key = c;
-				break;
-			case KEY_RIGHT: // steering servo goes one increment to the right
-				moveptr->steer += .2;
-				printf("%f\n",moveptr->steer);
-				prev_key = c;
-				break;
-			case KEY_LEFT: //steering servo goes one increment to the left
-				moveptr->steer -= .2;
-				printf("%f\n",moveptr->steer);
-				prev_key = c;
-				break;
-		         case ERR:
-			   if (prev_key != ERR && err_cnt < 1000000) {
-			     ++err_cnt;
-			   } else {
-			     moveptr->steer = 0;
-			     moveptr->throttle = 0;
-			     printf("Err\r\n");
-			     prev_key = ERR;
-			     err_cnt = 0;
-			   }
-			   break;
-		}
-	 
-	  
-      
-	  
-    
-   
-       }
-       return 0;
+    struct throttle_steer *moveptr = (struct throttle_steer *)ptr;
 
+    int prev_key = ERR;
+    unsigned long err_cnt = 0;
+
+    while(1) {
+        int c = getch();
+               sem_wait(sem);
+        switch (c) {
+            case KEY_UP: // pressing up arrow makes car goes forwards
+                moveptr->throttle = 1;
+                printf("%f\n",moveptr->throttle);
+                prev_key = c;
+                break;
+            case KEY_DOWN: //makes the car go backwards 
+                moveptr->throttle = -1;
+                printf("%f\n",moveptr->throttle);
+                prev_key = c;
+                break;
+            case KEY_RIGHT: // steering servo goes one increment to the right
+                moveptr->steer += .2;
+                printf("%f\n",moveptr->steer);
+                prev_key = c;
+                break;
+            case KEY_LEFT: //steering servo goes one increment to the left
+                moveptr->steer -= .2;
+                printf("%f\n",moveptr->steer);
+                prev_key = c;
+                break;
+            case ERR:
+                if (prev_key != ERR && err_cnt < 1000000) {
+                    ++err_cnt;
+                } else {
+                    moveptr->steer = 0;
+                    moveptr->throttle = 0;
+                    printf("Err\r\n");
+                    prev_key = ERR;
+                    err_cnt = 0;
+                }
+                break;
+        }
+        sem_post(sem);
+
+    }
+    return 0;
 }
+
