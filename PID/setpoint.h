@@ -9,5 +9,8 @@ struct setpoint{
 	float x_pos;
 	float y_pos;
 	float angle;
+
+	float x_set;
+	float y_set;
 };
 #endif //PID_SHARED_POS_H

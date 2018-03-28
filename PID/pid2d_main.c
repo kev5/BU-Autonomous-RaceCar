@@ -64,7 +64,7 @@ int main() {
 	struct throttle_steer *moveptr = (struct throttle_steer *)servo_ptr;
 	struct setpoint *current_dest = (struct setpoint *)pos_ptr;
 
-	float distance = (float) pow(pow(current_dest->x_pos,2) + pow(current_dest->y_pos,2),0.5);
+	float distance = pow(pow(current_dest->x_pos - current_dest->x_set,2) + pow(current_dest->y_pos - current_dest->y_set,2),0.5);
 	float angle = current_dest->angle;
 
 	setpoint = 0; setpoint_ang = 0;
@@ -100,7 +100,7 @@ int main() {
 		if (pid_need_compute(throttle_controller)) { // time check to see if needed to update PID
 			sem_wait(servo_sem);
 			if(throttle_active){
-				distance = (float) pow(pow(current_dest->x_pos,2) + pow(current_dest->y_pos,2),0.5);
+				distance = (float) pow(pow(current_dest->x_pos - current_dest->x_set,2) + pow(current_dest->y_pos - current_dest->y_set,2),0.5);
 				throttle_input = distance;
 				pid_compute(throttle_controller);
 				moveptr->throttle = throttle_output;
