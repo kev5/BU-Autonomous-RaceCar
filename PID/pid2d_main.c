@@ -103,6 +103,7 @@ int main() {
 				distance = (float) pow(pow(current_dest->x_pos,2) + pow(current_dest->y_pos,2),0.5);
 				throttle_input = distance;
 				pid_compute(throttle_controller);
+				moveptr->throttle = throttle_output;
 			}
 
 			if(steer_active){
