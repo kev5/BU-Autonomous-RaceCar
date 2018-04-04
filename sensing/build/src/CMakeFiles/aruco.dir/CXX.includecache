@@ -700,21 +700,21 @@ lapacke_mangling.h
 
 ../3rdparty/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
-/home/nvidia/Downloads/aruco304/src/aruco.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco.h
 markerdetector.h
-/home/nvidia/Downloads/aruco304/src/markerdetector.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerdetector.h
 posetracker.h
-/home/nvidia/Downloads/aruco304/src/posetracker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/posetracker.h
 cvdrawingutils.h
-/home/nvidia/Downloads/aruco304/src/cvdrawingutils.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cvdrawingutils.h
 dictionary.h
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 
-/home/nvidia/Downloads/aruco304/src/cameraparameters.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.cpp
 cameraparameters.h
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 opencv2/calib3d.hpp
 -
 opencv2/core.hpp
@@ -724,9 +724,9 @@ fstream
 iostream
 -
 
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 opencv2/core.hpp
 -
 string
@@ -734,29 +734,29 @@ string
 stdexcept
 -
 
-/home/nvidia/Downloads/aruco304/src/cvdrawingutils.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cvdrawingutils.cpp
 opencv2/calib3d.hpp
 -
 opencv2/imgproc.hpp
 -
 cvdrawingutils.h
-/home/nvidia/Downloads/aruco304/src/cvdrawingutils.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cvdrawingutils.h
 cameraparameters.h
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 
-/home/nvidia/Downloads/aruco304/src/cvdrawingutils.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cvdrawingutils.h
 aruco.h
-/home/nvidia/Downloads/aruco304/src/aruco.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 
-/home/nvidia/Downloads/aruco304/src/debug.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/debug.cpp
 debug.h
-/home/nvidia/Downloads/aruco304/src/debug.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/debug.h
 fstream
 -
 
-/home/nvidia/Downloads/aruco304/src/debug.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/debug.h
 iostream
 -
 fstream
@@ -764,15 +764,15 @@ fstream
 ctime
 -
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 map
 -
 string
 -
 
-/home/nvidia/Downloads/aruco304/src/dictionary.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.cpp
 dictionary.h
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 exception
 -
 stdint.h
@@ -788,15 +788,15 @@ bitset
 opencv2/imgproc.hpp
 -
 markermap.h
-/home/nvidia/Downloads/aruco304/src/markermap.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.h
 set
 -
 stdexcept
 -
 
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 opencv2/core.hpp
 -
 iostream
@@ -810,21 +810,21 @@ string
 vector
 -
 
-/home/nvidia/Downloads/aruco304/src/ippe.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/ippe.cpp
 ippe.h
-/home/nvidia/Downloads/aruco304/src/ippe.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/ippe.h
 opencv2/calib3d.hpp
 -
 opencv2/imgproc.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/ippe.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/ippe.h
 opencv2/core.hpp
 -
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 
-/home/nvidia/Downloads/aruco304/src/levmarq.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/levmarq.h
 Eigen/Core
 -
 Eigen/Cholesky
@@ -846,9 +846,9 @@ chrono
 iomanip
 -
 
-/home/nvidia/Downloads/aruco304/src/marker.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.cpp
 marker.h
-/home/nvidia/Downloads/aruco304/src/marker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h
 opencv2/calib3d.hpp
 -
 opencv2/imgproc.hpp
@@ -858,11 +858,11 @@ cstdio
 math.h
 -
 cameraparameters.h
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 
-/home/nvidia/Downloads/aruco304/src/marker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 opencv2/core.hpp
 -
 cstdint
@@ -872,15 +872,15 @@ iostream
 vector
 -
 
-/home/nvidia/Downloads/aruco304/src/markerdetector.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerdetector.cpp
 markerdetector.h
-/home/nvidia/Downloads/aruco304/src/markerdetector.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerdetector.h
 cameraparameters.h
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 markerlabeler.h
-/home/nvidia/Downloads/aruco304/src/markerlabeler.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h
 timers.h
-/home/nvidia/Downloads/aruco304/src/timers.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/timers.h
 opencv2/core.hpp
 -
 opencv2/imgproc.hpp
@@ -896,13 +896,13 @@ chrono
 thread
 -
 debug.h
-/home/nvidia/Downloads/aruco304/src/debug.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/debug.h
 opencv2/highgui/highgui.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/markerdetector.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerdetector.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 opencv2/core.hpp
 -
 cstdio
@@ -918,27 +918,27 @@ condition_variable
 vector
 -
 marker.h
-/home/nvidia/Downloads/aruco304/src/marker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h
 
-/home/nvidia/Downloads/aruco304/src/markerlabeler.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.cpp
 markerlabeler.h
-/home/nvidia/Downloads/aruco304/src/markerlabeler.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h
 markerlabelers/svmmarkers.h
-/home/nvidia/Downloads/aruco304/src/markerlabelers/svmmarkers.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/svmmarkers.h
 markerlabelers/dictionary_based.h
-/home/nvidia/Downloads/aruco304/src/markerlabelers/dictionary_based.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/dictionary_based.h
 
-/home/nvidia/Downloads/aruco304/src/markerlabeler.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 dictionary.h
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 opencv2/core.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/markerlabelers/dictionary_based.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/dictionary_based.cpp
 dictionary_based.h
-/home/nvidia/Downloads/aruco304/src/markerlabelers/dictionary_based.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/dictionary_based.h
 opencv2/imgproc/imgproc.hpp
 -
 bitset
@@ -948,17 +948,17 @@ cmath
 opencv2/highgui.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/markerlabelers/dictionary_based.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/dictionary_based.h
 ../dictionary.h
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 ../markerlabeler.h
-/home/nvidia/Downloads/aruco304/src/markerlabeler.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h
 opencv2/core/core.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/markerlabelers/svmmarkers.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/svmmarkers.cpp
 svmmarkers.h
-/home/nvidia/Downloads/aruco304/src/markerlabelers/svmmarkers.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/svmmarkers.h
 iostream
 -
 vector
@@ -978,15 +978,15 @@ opencv2/ml.hpp
 iostream
 -
 
-/home/nvidia/Downloads/aruco304/src/markerlabelers/svmmarkers.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/svmmarkers.h
 ../markerlabeler.h
-/home/nvidia/Downloads/aruco304/src/markerlabeler.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h
 
-/home/nvidia/Downloads/aruco304/src/markermap.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.cpp
 markermap.h
-/home/nvidia/Downloads/aruco304/src/markermap.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.h
 dictionary.h
-/home/nvidia/Downloads/aruco304/src/dictionary.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h
 opencv2/calib3d.hpp
 -
 opencv2/imgproc.hpp
@@ -994,11 +994,11 @@ opencv2/imgproc.hpp
 fstream
 -
 
-/home/nvidia/Downloads/aruco304/src/markermap.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 marker.h
-/home/nvidia/Downloads/aruco304/src/marker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h
 opencv2/core.hpp
 -
 string
@@ -1006,33 +1006,33 @@ string
 vector
 -
 
-/home/nvidia/Downloads/aruco304/src/posetracker.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/posetracker.cpp
 posetracker.h
-/home/nvidia/Downloads/aruco304/src/posetracker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/posetracker.h
 ippe.h
-/home/nvidia/Downloads/aruco304/src/ippe.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/ippe.h
 set
 -
 levmarq.h
-/home/nvidia/Downloads/aruco304/src/levmarq.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/levmarq.h
 opencv2/calib3d.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/posetracker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/posetracker.h
 aruco_export.h
-/home/nvidia/Downloads/aruco304/src/aruco_export.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h
 cameraparameters.h
-/home/nvidia/Downloads/aruco304/src/cameraparameters.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h
 marker.h
-/home/nvidia/Downloads/aruco304/src/marker.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h
 markermap.h
-/home/nvidia/Downloads/aruco304/src/markermap.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.h
 map
 -
 opencv2/core.hpp
 -
 
-/home/nvidia/Downloads/aruco304/src/timers.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/src/timers.h
 chrono
 -
 string

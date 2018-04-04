@@ -136,7 +136,7 @@ int main(int argc, char** argv)
         // read camera parameters
         TheCameraParameters.readFromXMLFile("out_camera_calibration.yml");
 
-        float TheMarkerSize = 0.185; 
+        float TheMarkerSize = 0.138; 
 
         ///////////  OPEN VIDEO
         // read from camera or from  file
@@ -186,8 +186,16 @@ int main(int argc, char** argv)
         int index = 0,indexSave=0;
 	// create new semaphore
 	#define SNAME "/position_sem"
-	sem_t* sem = sem_open(SNAME,O_CREAT,2000); 
-
+	sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000); 
+	if (!sem) {
+		sem_unlink(SNAME);
+		sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+		if(!sem) {
+			fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
+			exit(1);
+		} 
+	}
+	
 	// creates a shared memory block 
 
 	int fid = shm_open("position", O_CREAT | O_RDWR, 2000); 
@@ -208,7 +216,8 @@ int main(int argc, char** argv)
 	struct setpoint* positionPtr = (struct setpoint *) ptr; 
 	sem = sem_open("/position_sem",1); 
         // capture until press ESC or until the end of the video
-
+	positionPtr-> x_set = 5.8; 
+	positionPtr-> y_set = 2.4; 
          do
         {
 
@@ -243,8 +252,6 @@ int main(int argc, char** argv)
 		cv::Mat Rvec = TheMarkers[i].Rvec; 
 		
 		//cout << Tvec.at<double>(0,0) << endl;
-
-		cout << "Norm = " << sqrt(pow(Tvec.at<float>(0,0),2)+pow(Tvec.at<float>(1,0),2)+pow(Tvec.at<float>(2,0),2)) << endl; 
                 TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255),2,true);
 		
 		// Matrix multiplication to get the global coordinate 
@@ -252,36 +259,61 @@ int main(int argc, char** argv)
 		cv::Rodrigues(Rvec, R);
 		R = R.t();
 		Tvec = -R * Tvec;
-		
+		cv::Mat Rmat; 
+		cv::Rodrigues(Rvec,Rmat);  
 		cv::Mat camPose = cv::Mat::eye(4, 4, R.type());
 		R.copyTo(camPose.rowRange(0,3).colRange(0,3));
 		Tvec.copyTo(camPose.rowRange(0,3).colRange(3,4));
-		cout << "X = " << Tvec.at<float>(0,0) << endl; 
-		cout << "Y = " << Tvec.at<float>(2,0) << endl; 
-		// Calculating the distance in X,Y plane 
-		float distance = sqrt(pow(Tvec.at<float>(0,0),2)+pow(Tvec.at<float>(2,0),2)); 
+		float sy = sqrt(Rmat.at<float>(0,0) * Rmat.at<float>(0,0) + Rmat.at<float>(1,0)* Rmat.at<float>(1,0) + Rmat.at<float>(2,0) * Rmat.at<float>(2,0)); 
+		bool singular = sy < 1e-6; 
+		float x_angle, y_angle, z_angle; 
+		if (!singular){
+			x_angle = atan2(Rmat.at<float>(2,1), Rmat.at<float>(2,2)); 
+			y_angle = atan2(-Rmat.at<float>(2,0),sy); 
+			z_angle = atan2(Rmat.at<float>(1,0),Rmat.at<float>(0,0)); 
+		} else {
+			x_angle = atan2(-Rmat.at<float>(1,2),Rmat.at<float>(1,1)); 
+			y_angle = atan2(-Rmat.at<float>(2,0),sy); 
+			z_angle = 0; 
+		}
 
-		cout << "Distance = " << distance << endl;
-		positionPtr->x_pos = Tvec.at<float>(0,0); 
-		positionPtr->y_pos = Tvec.at<float>(2,0); 
-		positionPtr->angle = 0; 
+		switch (TheMarkers[i].id){
+			case 22: 
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 2.4; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+			case 7:
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 4.3; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+			case 4:
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 6.0; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+		}
+		cout << "X Pos = " << positionPtr->x_pos << endl; 
+		cout << "Y Pos = " << positionPtr->y_pos << endl; 
+		positionPtr->angle = z_angle; 
+		cout << "Angle = " << positionPtr->angle << endl; 
+
 		//write the distance to memory at address 2000
 		sem_post(sem);
             }
 
             // draw a 3d cube in each marker if there is 3d info
+	    
             if (TheCameraParameters.isValid() && TheMarkerSize > 0)
                 for (unsigned int i = 0; i < TheMarkers.size(); i++)
                 {
                     CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                     CvDrawingUtils::draw3dAxis(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                 }
-
+		
             // show input with augmented information and  the thresholded image
-            printInfo(TheInputImageCopy);
-            cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
-            cv::imshow("in", TheInputImageCopy);
-
+            //printInfo(TheInputImageCopy);
+            //cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
+            //cv::imshow("in", TheInputImageCopy);
+		
             key = cv::waitKey(waitTime);  // wait for key to be pressed
             if (key == 's')
                 waitTime = waitTime == 0 ? 10 : 0;
@@ -324,6 +356,7 @@ int main(int argc, char** argv)
 
             if (isVideo)
                 if ( TheVideoCapturer.grab()==false) key=27;
+		
         } while (key != 27 );
     }
     catch (std::exception& ex)
@@ -345,7 +378,7 @@ void cvTackBarEvents(int pos, void*)
         Fps.start();
         MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters);
         Fps.stop();
-    // chekc the speed by calculating the mean speed of all iterations
+    // chekc the speed by calculating the mean speed of all iteration
     TheInputImage.copyTo(TheInputImageCopy);
     if (iShowAllCandidates){
         auto candidates=MDetector.getCandidates();
@@ -362,8 +395,8 @@ void cvTackBarEvents(int pos, void*)
     if (TheCameraParameters.isValid())
         for (unsigned int i = 0; i < TheMarkers.size(); i++)
             CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
-    cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
+    //cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
 
-    cv::imshow("in",  TheInputImageCopy );
-    cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
+    //cv::imshow("in",  TheInputImageCopy );
+    //cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
 }

@@ -108,9 +108,9 @@ map
 opencv2/core.hpp
 -
 
-/home/nvidia/Downloads/aruco304/utils/aruco_simple.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_simple.cpp
 aruco.h
-/home/nvidia/Downloads/aruco304/utils/aruco.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco.h
 iostream
 -
 opencv2/highgui.hpp

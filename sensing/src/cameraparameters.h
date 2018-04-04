@@ -33,6 +33,7 @@ or implied, of Rafael Muñoz Salinas.
 #include <string>
 #include <stdexcept>
 
+
 namespace aruco
 {
     /**\brief Parameters of the camera

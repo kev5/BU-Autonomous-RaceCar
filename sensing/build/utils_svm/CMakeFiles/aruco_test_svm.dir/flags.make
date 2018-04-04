@@ -6,5 +6,5 @@ CXX_FLAGS = -g3 -O0 -DDEBUG -D_DEBUG -W -Wextra -Wno-return-type -Wall   -std=gn
 
 CXX_DEFINES = -DDOUBLE_PRECISION_PNP -DUSE_SVM_LABELER
 
-CXX_INCLUDES = -I/home/nvidia/Downloads/aruco304/build/utils_svm -I/home/nvidia/Downloads/aruco304/utils_svm -I/usr/include/opencv -I/home/nvidia/Downloads/aruco304/3rdparty/eigen3 -I/home/nvidia/Downloads/aruco304/src 
+CXX_INCLUDES = -I/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_svm -I/home/nvidia/BU-Autonomous-RaceCar/sensing/utils_svm -I/usr/include/opencv -I/home/nvidia/BU-Autonomous-RaceCar/sensing/3rdparty/eigen3 -I/home/nvidia/BU-Autonomous-RaceCar/sensing/src 
 

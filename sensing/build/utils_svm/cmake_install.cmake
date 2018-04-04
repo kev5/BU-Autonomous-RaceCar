@@ -1,4 +1,4 @@
-# Install script for directory: /home/nvidia/Downloads/aruco304/utils_svm
+# Install script for directory: /home/nvidia/BU-Autonomous-RaceCar/sensing/utils_svm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,12 +39,12 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_test_svm"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/nvidia/Downloads/aruco304/build/utils_svm/aruco_test_svm")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_svm/aruco_test_svm")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_test_svm" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_test_svm")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_test_svm"
-         OLD_RPATH "/usr/local/cuda/lib64:/home/nvidia/Downloads/aruco304/build/src:"
+         OLD_RPATH "/usr/local/cuda/lib64:/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src:"
          NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_test_svm")

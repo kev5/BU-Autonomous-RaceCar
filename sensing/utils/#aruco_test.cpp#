@@ -1,16 +1,12 @@
 /**
 Copyright 2017 Rafael Muñoz Salinas. All rights reserved.
-
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
-
    1. Redistributions of source code must retain the above copyright notice, this list of
       conditions and the following disclaimer.
-
    2. Redistributions in binary form must reproduce the above copyright notice, this list
       of conditions and the following disclaimer in the documentation and/or other materials
       provided with the distribution.
-
 THIS SOFTWARE IS PROVIDED BY Rafael Muñoz Salinas ''AS IS'' AND ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Rafael Muñoz Salinas OR
@@ -20,7 +16,6 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSE
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 The views and conclusions contained in the software and documentation are those of the
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of Rafael Muñoz Salinas.
@@ -28,13 +23,26 @@ or implied, of Rafael Muñoz Salinas.
 
  #include "aruco.h"
 #include "cvdrawingutils.h"
-#include <fstream>
-#include <iostream>
+// OpenCV and Aruco includes
+#include <opencv2/core.hpp>
+#include <opencv2/calib3d.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+
+// Shared Memory includes
+#include <sys/mman.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <semaphore.h>
+#include "setpoint.h"
+
+
 #include <sstream>
 #include <string>
 #include <stdexcept>
+#include <fstream>
+#include <iostream>	
 
 using namespace std;
 using namespace cv;
@@ -123,29 +131,12 @@ int main(int argc, char** argv)
     try
     {
         CmdLineParser cml(argc, argv);
-        if (argc < 2 || cml["-h"])
-        {
-            cerr << "Invalid number of arguments" << endl;
-            cerr << "Usage: (in.avi|live[:camera_index(e.g 0 or 1)]) [-c camera_params.yml] [-s  marker_size_in_meters] [-d "
-                    "dictionary:ALL_DICTS by default] [-h]"
-                 << endl;
-            cerr << "\tDictionaries: ";
-            for (auto dict : aruco::Dictionary::getDicTypes())
-                cerr << dict << " ";
-            cerr << endl;
-            cerr << "\t Instead of these, you can directly indicate the path to a file with your own generated "
-                    "dictionary"
-                 << endl;
-            return false;
-        }
-
         ///////////  PARSE ARGUMENTS
         string TheInputVideo = argv[1];
-        // read camera parameters if passed
-        if (cml["-c"])
-            TheCameraParameters.readFromXMLFile(cml("-c"));
+        // read camera parameters
+        TheCameraParameters.readFromXMLFile("out_camera_calibration.yml");
 
-        float TheMarkerSize = std::stof(cml("-s", "-1"));
+        float TheMarkerSize = 0.138; 
 
         ///////////  OPEN VIDEO
         // read from camera or from  file
@@ -169,14 +160,13 @@ int main(int argc, char** argv)
             if ( TheVideoCapturer.get(CV_CAP_PROP_FRAME_COUNT)>=2) isVideo=true;
         }
         // check video is open
-        if (!TheVideoCapturer.isOpened())
-            throw std::runtime_error("Could not open video");
+	 if (!TheVideoCapturer.isOpened())
+	   throw std::runtime_error("Could not open video");
 
         ///// CONFIGURE DATA
         // read first image to get the dimensions
         TheVideoCapturer >> TheInputImage;
         if (TheCameraParameters.isValid())
-            TheCameraParameters.resize(TheInputImage.size());
         dictionaryString=cml("-d", "ALL_DICTS");
          MDetector.setDictionary(dictionaryString,float(iCorrectionRate)/10. );  // sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
 
@@ -194,8 +184,32 @@ int main(int argc, char** argv)
         // go!
         char key = 0;
         int index = 0,indexSave=0;
-        // capture until press ESC or until the end of the video
+	// create new semaphore
+	#define SNAME "/position_sem"
+	sem_t* sem = sem_open(SNAME,O_CREAT,2000); 
 
+	// creates a shared memory block 
+
+	int fid = shm_open("position", O_CREAT | O_RDWR, 2000); 
+	if (fid == -1){
+		perror("shm_open error \n"); 
+		return -1; 
+	}
+	ftruncate(fid,4096); 
+
+	// Mapping Successful
+	void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
+    	if (ptr == MAP_FAILED){
+        perror("error with mapping");
+        return -1;
+	}
+	sem_init(sem,1,1); 
+
+	struct setpoint* positionPtr = (struct setpoint *) ptr; 
+	sem = sem_open("/position_sem",1); 
+        // capture until press ESC or until the end of the video
+	positionPtr-> x_set = 5.8; 
+	positionPtr-> y_set = 2.4; 
          do
         {
 
@@ -205,8 +219,8 @@ int main(int argc, char** argv)
             Fps.start();
             TheMarkers = MDetector.detect(TheInputImage, TheCameraParameters, TheMarkerSize);
             Fps.stop();
-            // chekc the speed by calculating the mean speed of all iterations
-             cout << "\rTime detection=" << Fps.getAvrg()*1000 << " milliseconds nmarkers=" << TheMarkers.size() << std::endl;
+            // check the speed by calculating the mean speed of all iterations
+             // cout << "\rTime detection=" << Fps.getAvrg()*1000 << " milliseconds nmarkers=" << TheMarkers.size() << std::endl;
 
             // print marker info and draw the markers in image
             TheInputImage.copyTo(TheInputImageCopy);
@@ -216,23 +230,61 @@ int main(int argc, char** argv)
                 for(auto cand:candidates)
                     Marker(cand,-1).draw(TheInputImageCopy, Scalar(255, 0, 255));
             }
+	 
 
             for (unsigned int i = 0; i < TheMarkers.size(); i++)
             {
-                cout << TheMarkers[i] << endl;
+		// memory waits for the calculation
+		sem_wait(sem); 
+
+		// calculate the extrinsics
+		TheMarkers[i].calculateExtrinsics(TheMarkerSize,TheCameraParameters,true); 
+
+		cv::Mat Tvec = TheMarkers[i].Tvec; 
+		cv::Mat Rvec = TheMarkers[i].Rvec; 
+		
+		//cout << Tvec.at<double>(0,0) << endl;
                 TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255),2,true);
 		
+		// Matrix multiplication to get the global coordinate 
+		cv::Mat R;
+		cv::Rodrigues(Rvec, R);
+		R = R.t();
+		Tvec = -R * Tvec;
+		
+		cv::Mat camPose = cv::Mat::eye(4, 4, R.type());
+		R.copyTo(camPose.rowRange(0,3).colRange(0,3));
+		Tvec.copyTo(camPose.rowRange(0,3).colRange(3,4));
+
+		switch (TheMarkers[i].id){
+			case 22: 
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 2.4; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+			case 7:
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 4.3; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+			case 4:
+				positionPtr->x_pos = Tvec.at<float>(0,0) + 6.0; 
+				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
+				break; 
+		}
+		cout << "X = " << positionPtr->x_pos << endl; 
+		cout << "Y = " << positionPtr->y_pos << endl; 
+		positionPtr->angle = 0; 
+		//write the distance to memory at address 2000
+		sem_post(sem);
             }
 
             // draw a 3d cube in each marker if there is 3d info
-	    if (TheCameraParameters.isValid() && TheMarkerSize > 0)
+            if (TheCameraParameters.isValid() && TheMarkerSize > 0)
                 for (unsigned int i = 0; i < TheMarkers.size(); i++)
                 {
                     CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                     CvDrawingUtils::draw3dAxis(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                 }
 
-            // DONE! Easy, right?
             // show input with augmented information and  the thresholded image
             printInfo(TheInputImageCopy);
             cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));

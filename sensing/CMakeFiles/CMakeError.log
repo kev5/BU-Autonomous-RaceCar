@@ -1,0 +1,56 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_48092/fast"
+/usr/bin/make -f CMakeFiles/cmTC_48092.dir/build.make CMakeFiles/cmTC_48092.dir/build
+make[1]: Entering directory '/home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_48092.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++      -o CMakeFiles/cmTC_48092.dir/CheckSymbolExists.cxx.o -c /home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Linking CXX executable cmTC_48092
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48092.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_48092.dir/CheckSymbolExists.cxx.o  -o cmTC_48092 -rdynamic 
+CMakeFiles/cmTC_48092.dir/CheckSymbolExists.cxx.o: In function `main':
+CheckSymbolExists.cxx:(.text+0x14): undefined reference to `pthread_create'
+CheckSymbolExists.cxx:(.text+0x18): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_48092.dir/build.make:97: recipe for target 'cmTC_48092' failed
+make[1]: *** [cmTC_48092] Error 1
+make[1]: Leaving directory '/home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_48092/fast' failed
+make: *** [cmTC_48092/fast] Error 2
+
+File /home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b4afd/fast"
+/usr/bin/make -f CMakeFiles/cmTC_b4afd.dir/build.make CMakeFiles/cmTC_b4afd.dir/build
+make[1]: Entering directory '/home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b4afd.dir/CheckFunctionExists.cxx.o
+/usr/bin/c++     -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_b4afd.dir/CheckFunctionExists.cxx.o -c /home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_b4afd
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4afd.dir/link.txt --verbose=1
+/usr/bin/c++    -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_b4afd.dir/CheckFunctionExists.cxx.o  -o cmTC_b4afd -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_b4afd.dir/build.make:97: recipe for target 'cmTC_b4afd' failed
+make[1]: *** [cmTC_b4afd] Error 1
+make[1]: Leaving directory '/home/nvidia/BU-Autonomous-RaceCar/sensing/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_b4afd/fast' failed
+make: *** [cmTC_b4afd/fast] Error 2
+
+

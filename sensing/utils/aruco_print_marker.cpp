@@ -93,8 +93,7 @@ int main(int argc, char** argv)
         bool waterMark = true;
         // loads the desired dictionary
         aruco::Dictionary dic = aruco::Dictionary::load(cml("-d", "ARUCO"));
-
-        cv::imwrite(argv[2], dic.getMarkerImage_id(stoi(argv[1]), pixSize, waterMark, enclosingCorners));
+       	cv::imwrite(argv[2], dic.getMarkerImage_id(stoi(argv[1]), pixSize, waterMark, enclosingCorners));
     }
     catch (std::exception& ex)
     {

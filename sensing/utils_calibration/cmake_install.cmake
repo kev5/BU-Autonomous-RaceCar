@@ -1,4 +1,4 @@
-# Install script for directory: /home/nvidia/Downloads/aruco304
+# Install script for directory: /home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,56 +33,42 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco-uninstalled.pc"
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco.pc"
-    )
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration"
+         RPATH "")
+  endif()
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration"
+         OLD_RPATH "/usr/local/cuda/lib64:/home/nvidia/BU-Autonomous-RaceCar/sensing/src:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration")
+    endif()
+  endif()
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/Downloads/aruco304/utils_calibration/utils_calibration/aruco_calibration_grid_board_a4.pdf;/home/nvidia/Downloads/aruco304/utils_calibration/utils_calibration/aruco_calibration_grid_board_a4.yml")
-  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
-    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages"
+         RPATH "")
   endif()
-  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
-    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration_fromimages")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages"
+         OLD_RPATH "/usr/local/cuda/lib64:/home/nvidia/BU-Autonomous-RaceCar/sensing/src:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/aruco_calibration_fromimages")
+    endif()
   endif()
-file(INSTALL DESTINATION "/home/nvidia/Downloads/aruco304/utils_calibration/utils_calibration" TYPE FILE FILES
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_grid_board_a4.pdf"
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_grid_board_a4.yml"
-    )
 endif()
 
-if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/Downloads/aruco304/utils_calibration/utils/myown.dict")
-  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
-    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
-  endif()
-  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
-    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
-  endif()
-file(INSTALL DESTINATION "/home/nvidia/Downloads/aruco304/utils_calibration/utils" TYPE FILE FILES "/home/nvidia/Downloads/aruco304/utils/myown.dict")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/home/nvidia/Downloads/aruco304/utils_calibration/src/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/utils_calibration/utils/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/utils_calibration/utils_markermap/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/utils_calibration/utils_calibration/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/utils_calibration/utils_svm/cmake_install.cmake")
-
-endif()
-
-if(CMAKE_INSTALL_COMPONENT)
-  set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
-else()
-  set(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
-endif()
-
-string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
-       "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nvidia/Downloads/aruco304/utils_calibration/${CMAKE_INSTALL_MANIFEST}"
-     "${CMAKE_INSTALL_MANIFEST_CONTENT}")

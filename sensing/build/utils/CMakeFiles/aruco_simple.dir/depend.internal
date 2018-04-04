@@ -11,4 +11,4 @@ utils/CMakeFiles/aruco_simple.dir/aruco_simple.cpp.o
  ../src/markerdetector.h
  ../src/markermap.h
  ../src/posetracker.h
- /home/nvidia/Downloads/aruco304/utils/aruco_simple.cpp
+ /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_simple.cpp

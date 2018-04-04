@@ -1,4 +1,4 @@
-# Install script for directory: /home/nvidia/Downloads/aruco304/src
+# Install script for directory: /home/nvidia/BU-Autonomous-RaceCar/sensing/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -46,9 +46,9 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
     endif()
   endforeach()
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE FILES
-    "/home/nvidia/Downloads/aruco304/build/src/libaruco.so.3.0.4"
-    "/home/nvidia/Downloads/aruco304/build/src/libaruco.so.3.0"
-    "/home/nvidia/Downloads/aruco304/build/src/libaruco.so"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/libaruco.so.3.0.4"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/libaruco.so.3.0"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/libaruco.so"
     )
   foreach(file
       "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libaruco.so.3.0.4"
@@ -70,21 +70,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/aruco" TYPE FILE FILES
-    "/home/nvidia/Downloads/aruco304/src/aruco_export.h"
-    "/home/nvidia/Downloads/aruco304/src/cameraparameters.h"
-    "/home/nvidia/Downloads/aruco304/src/cvdrawingutils.h"
-    "/home/nvidia/Downloads/aruco304/src/dictionary.h"
-    "/home/nvidia/Downloads/aruco304/src/ippe.h"
-    "/home/nvidia/Downloads/aruco304/src/marker.h"
-    "/home/nvidia/Downloads/aruco304/src/markerdetector.h"
-    "/home/nvidia/Downloads/aruco304/src/markerlabeler.h"
-    "/home/nvidia/Downloads/aruco304/src/markermap.h"
-    "/home/nvidia/Downloads/aruco304/src/posetracker.h"
-    "/home/nvidia/Downloads/aruco304/src/markerlabelers/dictionary_based.h"
-    "/home/nvidia/Downloads/aruco304/src/timers.h"
-    "/home/nvidia/Downloads/aruco304/src/debug.h"
-    "/home/nvidia/Downloads/aruco304/src/aruco.h"
-    "/home/nvidia/Downloads/aruco304/src/markerlabelers/svmmarkers.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco_export.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cameraparameters.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/cvdrawingutils.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/dictionary.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/ippe.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/marker.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerdetector.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabeler.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markermap.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/posetracker.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/dictionary_based.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/timers.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/debug.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/aruco.h"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/src/markerlabelers/svmmarkers.h"
     )
 endif()
 
@@ -92,7 +92,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/aruco/cmake/arucoConfig.cmake")
     file(DIFFERENT EXPORT_FILE_CHANGED FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/aruco/cmake/arucoConfig.cmake"
-         "/home/nvidia/Downloads/aruco304/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig.cmake")
+         "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig.cmake")
     if(EXPORT_FILE_CHANGED)
       file(GLOB OLD_CONFIG_FILES "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/aruco/cmake/arucoConfig-*.cmake")
       if(OLD_CONFIG_FILES)
@@ -101,9 +101,9 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
       endif()
     endif()
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/aruco/cmake" TYPE FILE FILES "/home/nvidia/Downloads/aruco304/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/aruco/cmake" TYPE FILE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig.cmake")
   if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/aruco/cmake" TYPE FILE FILES "/home/nvidia/Downloads/aruco304/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig-debug.cmake")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/aruco/cmake" TYPE FILE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/CMakeFiles/Export/share/aruco/cmake/arucoConfig-debug.cmake")
   endif()
 endif()
 

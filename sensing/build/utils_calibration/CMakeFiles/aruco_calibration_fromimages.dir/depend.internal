@@ -12,5 +12,5 @@ utils_calibration/CMakeFiles/aruco_calibration_fromimages.dir/aruco_calibration_
  ../src/markermap.h
  ../src/posetracker.h
  ../utils_calibration/win_dirent.h
- /home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_fromimages.cpp
- /home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_grid_board_a4.h
+ /home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration_fromimages.cpp
+ /home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration_grid_board_a4.h

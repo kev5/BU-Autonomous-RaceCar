@@ -108,13 +108,13 @@ map
 opencv2/core.hpp
 -
 
-/home/nvidia/Downloads/aruco304/utils/aruco_tracker.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_tracker.cpp
 string
 -
 aruco.h
-/home/nvidia/Downloads/aruco304/utils/aruco.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco.h
 cvdrawingutils.h
-/home/nvidia/Downloads/aruco304/utils/cvdrawingutils.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/cvdrawingutils.h
 iostream
 -
 opencv2/highgui.hpp

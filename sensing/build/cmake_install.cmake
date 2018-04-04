@@ -1,4 +1,4 @@
-# Install script for directory: /home/nvidia/Downloads/aruco304
+# Install script for directory: /home/nvidia/BU-Autonomous-RaceCar/sensing
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,45 +34,45 @@ endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES
-    "/home/nvidia/Downloads/aruco304/build/aruco-uninstalled.pc"
-    "/home/nvidia/Downloads/aruco304/build/aruco.pc"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/aruco-uninstalled.pc"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/aruco.pc"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/Downloads/aruco304/build/utils_calibration/aruco_calibration_grid_board_a4.pdf;/home/nvidia/Downloads/aruco304/build/utils_calibration/aruco_calibration_grid_board_a4.yml")
+   "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_calibration/aruco_calibration_grid_board_a4.pdf;/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_calibration/aruco_calibration_grid_board_a4.yml")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/Downloads/aruco304/build/utils_calibration" TYPE FILE FILES
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_grid_board_a4.pdf"
-    "/home/nvidia/Downloads/aruco304/utils_calibration/aruco_calibration_grid_board_a4.yml"
+file(INSTALL DESTINATION "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_calibration" TYPE FILE FILES
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration_grid_board_a4.pdf"
+    "/home/nvidia/BU-Autonomous-RaceCar/sensing/utils_calibration/aruco_calibration_grid_board_a4.yml"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/Downloads/aruco304/build/utils/myown.dict")
+   "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils/myown.dict")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/Downloads/aruco304/build/utils" TYPE FILE FILES "/home/nvidia/Downloads/aruco304/utils/myown.dict")
+file(INSTALL DESTINATION "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils" TYPE FILE FILES "/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/myown.dict")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/nvidia/Downloads/aruco304/build/src/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/build/utils/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/build/utils_markermap/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/build/utils_calibration/cmake_install.cmake")
-  include("/home/nvidia/Downloads/aruco304/build/utils_svm/cmake_install.cmake")
+  include("/home/nvidia/BU-Autonomous-RaceCar/sensing/build/src/cmake_install.cmake")
+  include("/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils/cmake_install.cmake")
+  include("/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_markermap/cmake_install.cmake")
+  include("/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_calibration/cmake_install.cmake")
+  include("/home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils_svm/cmake_install.cmake")
 
 endif()
 
@@ -84,5 +84,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nvidia/Downloads/aruco304/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/nvidia/BU-Autonomous-RaceCar/sensing/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -21,10 +21,11 @@
 #define SPAN_2 (THROTTLE_RIGHT - THROTTLE_LEFT)
 #ifdef _WIN32
 #define 0_NOCTTY 0
-#define SERVOSEM "/servosemaphore"
 #else
 #include <termios.h>
 #endif
+
+#define SERVOSEM "/servosemaphore"
 
 // Masestro serial mode must be set to "USB dual Port"
 // fd (file descriptor): used to access files
@@ -165,9 +166,15 @@ void servo(struct throttle_steer *ptr){
         perror(device);
     }
 
-    sem_t *sem = sem_open(SERVOSEM, O_CREAT, 0777, 1);
+    sem_t *sem = sem_open(SERVOSEM, O_CREAT | O_EXCL, 0777, 1);
+
     if (sem == SEM_FAILED){
-        perror("semaphore open error in servo\n");
+	sem_unlink(SERVOSEM);
+	sem = sem_open(SERVOSEM, O_CREAT | O_EXCL, 0777, 1);
+	if (sem == SEM_FAILED){
+        	perror("semaphore open error in servo\n");
+		exit(1);
+	}
     }
 
     while(1){

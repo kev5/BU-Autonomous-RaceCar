@@ -11,4 +11,5 @@ utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o: ../src/markerdetector.h
 utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o: ../src/markermap.h
 utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o: ../src/posetracker.h
 utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o: ../utils/aruco_test.cpp
+utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o: ../utils/setpoint.h
 

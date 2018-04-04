@@ -136,15 +136,15 @@ sys/stat.h
 errno.h
 -
 
-/home/nvidia/Downloads/aruco304/utils/aruco_batch_processing.cpp
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_batch_processing.cpp
 win_dirent.h
 -
 dirent.h
 -
 aruco.h
-/home/nvidia/Downloads/aruco304/utils/aruco.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco.h
 ippe.h
-/home/nvidia/Downloads/aruco304/utils/ippe.h
+/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/ippe.h
 iostream
 -
 fstream

@@ -1,6 +1,6 @@
 
-libdir=/home/nvidia/Downloads/aruco304/build
-includedir=/home/nvidia/Downloads/aruco304/src
+libdir=/home/nvidia/BU-Autonomous-RaceCar/sensing/build
+includedir=/home/nvidia/BU-Autonomous-RaceCar/sensing/src
 
 Name: aruco
 Description: ArUco: a minimal library for Augmented Reality applications based on OpenCv, uninstalled Version.
