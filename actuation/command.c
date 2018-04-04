@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <semaphore.h>
 #include <stdlib.h>
-#include "shared_def.h"
+#include "../include/shared_def.h"
 
 #define DEV_PATH  "/dev/PWM_OUT"
 #define SHM_SIZE 4096

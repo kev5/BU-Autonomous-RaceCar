@@ -35,8 +35,7 @@ or implied, of Rafael Muñoz Salinas.
 #include <sys/types.h>
 #include <fcntl.h>
 #include <semaphore.h>
-#include "setpoint.h"
-
+#include "../include/setpoint.h"
 
 #include <sstream>
 #include <string>

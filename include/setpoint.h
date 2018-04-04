@@ -6,11 +6,12 @@
 #define PID_SHARED_POS_H
 
 struct setpoint{
-	float x_pos;
-	float y_pos;
-	float angle;
+	float car_x;
+	float car_y;
+	float car_angle;
 
-	float x_set; 
-	float y_set; 
+	float set_x;
+	float set_y;
+	float set_angle;
 };
 #endif //PID_SHARED_POS_H

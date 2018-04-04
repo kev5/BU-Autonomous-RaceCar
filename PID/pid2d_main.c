@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "../actuation/shared_def.h"
+#include "../include/shared_def.h"
 #include "pid_source.h"
 #include "setpoint.h"
 
