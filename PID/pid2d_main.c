@@ -16,6 +16,7 @@
 
 #include "../include/pid_source.h"
 #include "../include/pid_params.h"
+#include "../include/shared_def.h"
 
 #define DEV_PATH  "/dev/PWM_OUT"
 #define SERVOSEM "/servosemaphore"
@@ -100,7 +101,7 @@ int main() {
 	run = true; // hard-coding to true. eventually some control could switch
 	while (run) {
 		sem_wait(servo_sem);
-		location = pid_inputs->setpoint;
+		location = pid_inputs->location;
 		setpoint = pid_inputs->setpoint;
 
 		if(throttle_active){

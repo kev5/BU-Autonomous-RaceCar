@@ -1,8 +1,8 @@
 CC= gcc
 CFLAGS= -lrt -pthread -lm
-DEPS = pid_params.h shared_def.h pid_source.h CoordinateMap.h
+DEPS = pid_params.h shared_def.h pid_source.h
 ODIR = obj
-TARGET = command pid2d_main
+TARGET = pid_source pid2d_main
 INCDIR = ../include
 
 all: $(TARGET)
