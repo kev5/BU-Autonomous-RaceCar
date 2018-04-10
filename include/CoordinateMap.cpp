@@ -13,7 +13,7 @@ CoordinateMap::CoordinateMap() {
     add_marker(22 ,twentytwo);
     add_marker(7, seven);
     add_marker(4, four);
-    // TODO: Serialization to permanently store newly created markers programatically
+    // TODO: Serialization to permanently store newly created markers programmatically
 }
 
 void CoordinateMap::add_marker(int value, coordinate position) {

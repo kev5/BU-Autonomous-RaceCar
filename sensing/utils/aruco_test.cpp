@@ -37,8 +37,8 @@ or implied, of Rafael Muñoz Salinas.
 #include <sys/types.h>
 #include <fcntl.h>
 #include <semaphore.h>
-#include "../include/pid_params.h"
-#include "../include/CoordinateMap.h"
+#include "/home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h"
+#include "/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h"
 
 // Standard Library Includes
 #include <sstream>
@@ -281,14 +281,14 @@ int main(int argc, char** argv) {
 				}
 
                 // Calculating current location based off of marker(s) seen
-                marker_location = coordinates.getCoords(TheMarkers[i].id);
+                struct coordinate marker_location = coordinates.getCoords(TheMarkers[i].id);
                 positionPtr->location.x = marker_location + Tvec.at<float>(0,0);
                 positionPtr->location.y = marker_location - Tvec.at<float>(2,0);
                 positionPtr.locaiton.angle = z_angle;
 
 				cout << "X Pos = " << positionPtr->location.x << endl;
 				cout << "Y Pos = " << positionPtr->location.y << endl;
-				cout << "Angle = " << positionPtr->locaiton.angle << endl;
+				cout << "Angle = " << positionPtr->location.angle << endl;
 
 				//write the distance to memory at address 2000
 				sem_post(sem);

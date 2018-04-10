@@ -22,7 +22,7 @@ public:
     void add_marker(int value, coordinate position);
 
 private:
-    std::map<int, Coordinate> aruco_map;
+    std::map<int, coordinate> aruco_map;
 
 };
 
