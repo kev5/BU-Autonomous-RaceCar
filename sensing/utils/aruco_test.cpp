@@ -221,7 +221,7 @@ int main(int argc, char** argv) {
         positionPtr->setpoint.angle = 0;
 
 	    // capture until press ESC or until the end of the video
-        CoordinateMap coordinates = CoordinateMap();
+        CoordinateMap::CoordinateMap arucos = CoordinateMap::CoordinateMap();
 
 	    do {
 		    TheVideoCapturer.retrieve(TheInputImage);
@@ -281,7 +281,7 @@ int main(int argc, char** argv) {
 				}
 
                 // Calculating current location based off of marker(s) seen
-                struct coordinate marker_location = coordinates.getCoords(TheMarkers[i].id);
+                struct coordinate marker_location = arucos.getCoords(TheMarkers[i].id);
                 positionPtr->location.x = marker_location.x + Tvec.at<float>(0,0);
                 positionPtr->location.y = marker_location.y - Tvec.at<float>(2,0);
                 positionPtr->location.angle = z_angle;
