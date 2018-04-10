@@ -5,7 +5,7 @@
 #ifndef BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
 #define BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
 
-#include "CoordinateMap.h"
+#include "pid_source.h"
 
 struct pid_params{
 

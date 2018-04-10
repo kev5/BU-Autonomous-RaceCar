@@ -8,11 +8,6 @@
 #include "pid_source.h"
 #include <map>
 
-struct coordinate {
-    float x;
-    float y;
-    float angle;
-};
 
 class CoordinateMap{
 public:

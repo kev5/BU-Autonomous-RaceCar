@@ -46,6 +46,12 @@ enum pid_control_directions {
  * posible using different structures for each controller
  */
 
+struct coordinate {
+	float x;
+	float y;
+	float angle;
+};
+
 struct pid_controller {
 	// Input, output and shared_position
 	struct coordinate * input; // Current coordinate of unit
