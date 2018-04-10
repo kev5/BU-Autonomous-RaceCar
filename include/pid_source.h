@@ -197,6 +197,8 @@ void pid_manual(pid_ct pid);
  */
 void pid_direction(pid_ct pid, enum pid_control_directions dir);
 
+int sign(float x);
+
 #ifdef	__cplusplus
 }
 #endif
