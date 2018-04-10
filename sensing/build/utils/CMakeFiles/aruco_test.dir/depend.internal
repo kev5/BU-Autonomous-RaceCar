@@ -11,5 +11,7 @@ utils/CMakeFiles/aruco_test.dir/aruco_test.cpp.o
  ../src/markerdetector.h
  ../src/markermap.h
  ../src/posetracker.h
+ /home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+ /home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h
+ /home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
  /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_test.cpp
- /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/setpoint.h

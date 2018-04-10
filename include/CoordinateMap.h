@@ -31,12 +31,15 @@ public:
     coordinate getCoords(int marker){
         std::map<int,coordinate>::iterator it;
         it = aruco_map.find(marker);
-
+	coordinate non; 
+	non.x = 0; 
+	non.y = 0; 
+	non.angle = 0; 
         if(it != aruco_map.end()){
             return it->second;
         }
         else{
-            return nullptr;
+            return non;
         }
     };
 
@@ -45,7 +48,7 @@ public:
     };
 
 private:
-    std::map<int, Coordinate> aruco_map;
+    std::map<int, coordinate> aruco_map;
 
 };
 

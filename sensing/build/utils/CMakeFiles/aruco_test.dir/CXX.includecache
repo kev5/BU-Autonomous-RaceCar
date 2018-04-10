@@ -108,6 +108,32 @@ map
 opencv2/core.hpp
 -
 
+/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+pid_source.h
+/home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
+map
+-
+
+/home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h
+CoordinateMap.h
+/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+
+/home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
+time.h
+-
+stdbool.h
+-
+stdint.h
+-
+stdlib.h
+-
+math.h
+-
+stdio.h
+-
+CoordinateMap.h
+/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+
 /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_test.cpp
 aruco.h
 /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco.h
@@ -131,8 +157,10 @@ fcntl.h
 -
 semaphore.h
 -
-setpoint.h
-/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/setpoint.h
+/home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h
+-
+/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+-
 sstream
 -
 string
@@ -143,6 +171,4 @@ fstream
 -
 iostream
 -
-
-/home/nvidia/BU-Autonomous-RaceCar/sensing/utils/setpoint.h
 
