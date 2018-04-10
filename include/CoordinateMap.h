@@ -8,6 +8,7 @@
 #include "pid_source.h"
 #include <map>
 
+// WARNING: don't include from .c files because <map> only works in c++
 
 class CoordinateMap{
 public:

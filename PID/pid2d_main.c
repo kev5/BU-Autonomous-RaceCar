@@ -37,7 +37,7 @@ bool run, throttle_active, steer_active;
 
 // Initial p, i, d values will be refined by actual live testing.. will tune these params from live testing
 float throttle_kp = 0.2, throttle_ki = 0, throttle_kd = 0;
-float steering_kp = 0.2, steering_ki = 0, steering_kd = 0;
+float steering_kp = 0.5, steering_ki = 0, steering_kd = 0;
 
 // Variables for PID to access, updated from shared mem..
 float throttle_output = 0, steer_output = 0;
@@ -115,8 +115,12 @@ int main() {
 
 		// Update output throttle & steering to shared memory
 		sem_post(servo_sem);
+        printf("Car X: %f, Y: %f, Theta: %f \n",pid_inputs->location.x,pid_inputs->location.y,pid_inputs->location.angle);
+        float alpha = (pid_inputs->setpoint.y > 0) ? (atan(pid_inputs->setpoint.x/pid_inputs->setpoint.y)) :
+                      sign(pid_inputs->setpoint.x)*atan(abs(pid_inputs->setpoint.y/pid_inputs->setpoint.x) + PI/2);
+        printf("Position X: %f, Y: %f, Alpha: %f \n",pid_inputs->setpoint.x,pid_inputs->setpoint.y, alpha);
 		printf("Distance from dest: %f. Angle difference: %f \n", throttle_controller->current_err, steering_controller->current_err);
-		printf("Throttle: %f , Steering: %f \n", throttle_output, steer_output);
+		//printf("Throttle: %f , Steering: %f \n", throttle_output, steer_output);
 	}
 	return 0;
 }

@@ -49,7 +49,8 @@ int sign(float x){
 }
 
 float normal_diff(float current, float last){
-	return ((current > PI/2 && last < -PI/2) ||(current < -PI/2 && last > PI/2))? (sign(current)*(PI-abs(current-last))):(current - last);
+	return ((current > PI/2 && last < -PI/2) ||(current < -PI/2 && last > PI/2))?
+           (sign(current)*(2*PI-abs(current-last))):(current - last);
 }
 
 float eucledian_dist(struct coordinate * current, struct coordinate * last){
@@ -63,7 +64,7 @@ void pid_compute(pid_ct pid) {
 
 	float error;
 	float dinput;
-	struct coordinate *current = (pid->input);
+	struct coordinate *current = pid->input;
 	struct coordinate *set = pid->setpoint;
 	struct coordinate *last = pid->lastin;
 
