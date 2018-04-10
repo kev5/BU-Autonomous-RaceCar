@@ -4,9 +4,8 @@ project(PID)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(PID
-        pid_main.c
+        pid2d_main.c
         pid_source.c
-        pid_source.h
-        setpoint.h
-        structexample.cpp)
-
+        ../include/pid_source.h
+        ../include/pid_params.h
+        )

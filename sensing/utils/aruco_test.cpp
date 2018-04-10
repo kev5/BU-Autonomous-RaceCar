@@ -21,8 +21,10 @@ authors and should not be interpreted as representing official policies, either 
 or implied, of Rafael Muñoz Salinas.
 */
 
- #include "aruco.h"
+// Local Includes
+#include "aruco.h"
 #include "cvdrawingutils.h"
+
 // OpenCV and Aruco includes
 #include <opencv2/core.hpp>
 #include <opencv2/calib3d.hpp>
@@ -35,8 +37,10 @@ or implied, of Rafael Muñoz Salinas.
 #include <sys/types.h>
 #include <fcntl.h>
 #include <semaphore.h>
-#include "../include/setpoint.h"
+#include "../include/pid_params.h"
+#include "../include/CoordinateMap.h"
 
+// Standard Library Includes
 #include <sstream>
 #include <string>
 #include <stdexcept>
@@ -62,8 +66,7 @@ class CmdLineParser{int argc;char** argv;public:CmdLineParser(int _argc, char** 
 struct   TimerAvrg{std::vector<double> times;size_t curr=0,n; std::chrono::high_resolution_clock::time_point begin,end;   TimerAvrg(int _n=30){n=_n;times.reserve(n);   }inline void start(){begin= std::chrono::high_resolution_clock::now();    }inline void stop(){end= std::chrono::high_resolution_clock::now();double duration=double(std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count())*1e-6;if ( times.size()<n) times.push_back(duration);else{ times[curr]=duration; curr++;if (curr>=times.size()) curr=0;}}double getAvrg(){double sum=0;for(auto t:times) sum+=t;return sum/double(times.size());}};
 
 TimerAvrg Fps;
-cv::Mat resize(const cv::Mat& in, int width)
-{
+cv::Mat resize(const cv::Mat& in, int width) {
     if (in.size().width <= width)
         return in;
     float yf = float(width) / float(in.size().width);
@@ -98,8 +101,7 @@ void putText(cv::Mat &im,string text,cv::Point p,float size){
     cv::putText(im,text,p,FONT_HERSHEY_SIMPLEX, size,cv::Scalar(125,255,255),1*fact);
 
 }
-void printHelp(cv::Mat &im)
-{
+void printHelp(cv::Mat &im) {
     (void)im;
     cv::putText(im,"'m': show/hide menu",cv::Point(10,40),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),1);
     cv::putText(im,"'w': write image to file",cv::Point(10,60),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),1);
@@ -112,8 +114,7 @@ void printInfo(cv::Mat &im){
     putText(im,"fps="+to_string(1./Fps.getAvrg()),cv::Point(10,fs*20),fs*0.5f);
     putText(im,"'h': show/hide help",cv::Point(10,fs*40),fs*0.5f);
     if(bPrintHelp) printHelp(im);
-    else
-    {
+    else {
         putText(im,"'h': show/hide help",cv::Point(10,fs*40),fs*0.5f);
         putText(im,"'m': show/hide menu",cv::Point(10,fs*60),fs*0.5f);
     }
@@ -125,10 +126,9 @@ void printInfo(cv::Mat &im){
  *
  *
  ************************************/
-int main(int argc, char** argv)
-{
-    try
-    {
+int main(int argc, char** argv) {
+    try {
+
         CmdLineParser cml(argc, argv);
         ///////////  PARSE ARGUMENTS
         string TheInputVideo = argv[1];
@@ -139,13 +139,11 @@ int main(int argc, char** argv)
 
         ///////////  OPEN VIDEO
         // read from camera or from  file
-        if (TheInputVideo.find("live") != string::npos)
-        {
+        if (TheInputVideo.find("live") != string::npos) {
             int vIdx = 0;
             // check if the :idx is here
             char cad[100];
-            if (TheInputVideo.find(":") != string::npos)
-            {
+            if (TheInputVideo.find(":") != string::npos) {
                 std::replace(TheInputVideo.begin(), TheInputVideo.end(), ':', ' ');
                 sscanf(TheInputVideo.c_str(), "%s %d", cad, &vIdx);
             }
@@ -167,7 +165,7 @@ int main(int argc, char** argv)
         TheVideoCapturer >> TheInputImage;
         if (TheCameraParameters.isValid())
         dictionaryString=cml("-d", "ALL_DICTS");
-         MDetector.setDictionary(dictionaryString,float(iCorrectionRate)/10. );  // sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
+	    MDetector.setDictionary(dictionaryString,float(iCorrectionRate)/10. );  // sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
 
         cv::namedWindow("in",cv::WINDOW_NORMAL);
         cv::resizeWindow("in",640,480);
@@ -178,56 +176,62 @@ int main(int argc, char** argv)
         float w=std::min(int(1920),int(TheInputImage.cols));
         float f=w/float(TheInputImage.cols);
         resizeWindow("in",w,float(TheInputImage.rows)*f);
-
         }
+
         // go!
-        char key = 0;
+	    char key = 0;
         int index = 0,indexSave=0;
-	// create new semaphore
-	#define SNAME "/position_sem"
-	sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000); 
-	if (!sem) {
-		sem_unlink(SNAME);
-		sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
-		if(!sem) {
-			fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
-			exit(1);
-		} 
-	}
+
+
+		// create new semaphore
+		#define SNAME "/position_sem"
+		sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+		if (!sem) {
+			sem_unlink(SNAME);
+			sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+			if(!sem) {
+				fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
+				exit(1);
+			}
+		}
 	
-	// creates a shared memory block 
+		// creates a shared memory block
 
-	int fid = shm_open("position", O_CREAT | O_RDWR, 2000); 
-	if (fid == -1){
-		perror("shm_open error \n"); 
-		return -1; 
-	}
-	ftruncate(fid,4096); 
+		int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
+		if (fid == -1){
+			perror("shm_open error \n");
+			return -1;
+		}
+		ftruncate(fid,4096);
 
-	// Mapping Successful
-	void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
-    	if (ptr == MAP_FAILED){
-        perror("error with mapping");
-        return -1;
-	}
-	sem_init(sem,1,1); 
+		// Mapping Successful
+		void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
+	        if (ptr == MAP_FAILED){
+	        perror("error with mapping");
+	        return -1;
+		}
+		sem_init(sem,1,1);
 
-	struct setpoint* positionPtr = (struct setpoint *) ptr; 
-	sem = sem_open("/position_sem",1); 
-        // capture until press ESC or until the end of the video
-	positionPtr-> x_set = 5.8; 
-	positionPtr-> y_set = 2.4; 
-         do
-        {
+		struct pid_params* positionPtr = (struct pid_params*) ptr;
+		sem = sem_open("/position_sem",1);
 
-             TheVideoCapturer.retrieve(TheInputImage);
+        // Hardcoding setpoint:
+		positionPtr->setpoint.x = 5.8;
+        positionPtr->setpoint.y = 2.4;
+        positionPtr->setpoint.angle = 0;
 
-              // copy image
+	    // capture until press ESC or until the end of the video
+        CoordinateMap coordinates = CoordinateMap();
+
+	    do {
+		    TheVideoCapturer.retrieve(TheInputImage);
+
+		    // copy image
             Fps.start();
             TheMarkers = MDetector.detect(TheInputImage, TheCameraParameters, TheMarkerSize);
             Fps.stop();
             // check the speed by calculating the mean speed of all iterations
-             // cout << "\rTime detection=" << Fps.getAvrg()*1000 << " milliseconds nmarkers=" << TheMarkers.size() << std::endl;
+		    // cout << "\rTime detection=" << Fps.getAvrg()*1000 << " milliseconds nmarkers=" << TheMarkers.size() << std::endl;
 
             // print marker info and draw the markers in image
             TheInputImage.copyTo(TheInputImageCopy);
@@ -239,71 +243,61 @@ int main(int argc, char** argv)
             }
 	 
 
-            for (unsigned int i = 0; i < TheMarkers.size(); i++)
-            {
-		// memory waits for the calculation
-		sem_wait(sem); 
 
-		// calculate the extrinsics
-		TheMarkers[i].calculateExtrinsics(TheMarkerSize,TheCameraParameters,true); 
+            for (unsigned int i = 0; i < TheMarkers.size(); i++) {
+				// memory waits for the calculation
+				sem_wait(sem);
 
-		cv::Mat Tvec = TheMarkers[i].Tvec; 
-		cv::Mat Rvec = TheMarkers[i].Rvec; 
+				// calculate the extrinsics
+				TheMarkers[i].calculateExtrinsics(TheMarkerSize,TheCameraParameters,true);
+
+				cv::Mat Tvec = TheMarkers[i].Tvec;
+				cv::Mat Rvec = TheMarkers[i].Rvec;
 		
-		//cout << Tvec.at<double>(0,0) << endl;
+				//cout << Tvec.at<double>(0,0) << endl;
                 TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255),2,true);
 		
-		// Matrix multiplication to get the global coordinate 
-		cv::Mat R;
-		cv::Rodrigues(Rvec, R);
-		R = R.t();
-		Tvec = -R * Tvec;
-		cv::Mat Rmat; 
-		cv::Rodrigues(Rvec,Rmat);  
-		cv::Mat camPose = cv::Mat::eye(4, 4, R.type());
-		R.copyTo(camPose.rowRange(0,3).colRange(0,3));
-		Tvec.copyTo(camPose.rowRange(0,3).colRange(3,4));
-		float sy = sqrt(Rmat.at<float>(0,0) * Rmat.at<float>(0,0) + Rmat.at<float>(1,0)* Rmat.at<float>(1,0) + Rmat.at<float>(2,0) * Rmat.at<float>(2,0)); 
-		bool singular = sy < 1e-6; 
-		float x_angle, y_angle, z_angle; 
-		if (!singular){
-			x_angle = atan2(Rmat.at<float>(2,1), Rmat.at<float>(2,2)); 
-			y_angle = atan2(-Rmat.at<float>(2,0),sy); 
-			z_angle = atan2(Rmat.at<float>(1,0),Rmat.at<float>(0,0)); 
-		} else {
-			x_angle = atan2(-Rmat.at<float>(1,2),Rmat.at<float>(1,1)); 
-			y_angle = atan2(-Rmat.at<float>(2,0),sy); 
-			z_angle = 0; 
-		}
+				// Matrix multiplication to get the global coordinate
+				cv::Mat R;
+				cv::Rodrigues(Rvec, R);
+				R = R.t();
+				Tvec = -R * Tvec;
+				cv::Mat Rmat;
+				cv::Rodrigues(Rvec,Rmat);
+				cv::Mat camPose = cv::Mat::eye(4, 4, R.type());
+				R.copyTo(camPose.rowRange(0,3).colRange(0,3));
+				Tvec.copyTo(camPose.rowRange(0,3).colRange(3,4));
+				float sy = sqrt(Rmat.at<float>(0,0) * Rmat.at<float>(0,0) + Rmat.at<float>(1,0)* Rmat.at<float>(1,0) + Rmat.at<float>(2,0) * Rmat.at<float>(2,0));
+				bool singular = sy < 1e-6;
+				float x_angle, y_angle, z_angle;
+				if (!singular){
+					x_angle = atan2(Rmat.at<float>(2,1), Rmat.at<float>(2,2));
+					y_angle = atan2(-Rmat.at<float>(2,0),sy);
+					z_angle = atan2(Rmat.at<float>(1,0),Rmat.at<float>(0,0));
+				} else {
+					x_angle = atan2(-Rmat.at<float>(1,2),Rmat.at<float>(1,1));
+					y_angle = atan2(-Rmat.at<float>(2,0),sy);
+					z_angle = 0;
+				}
 
-		switch (TheMarkers[i].id){
-			case 22: 
-				positionPtr->x_pos = Tvec.at<float>(0,0) + 2.4; 
-				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
-				break; 
-			case 7:
-				positionPtr->x_pos = Tvec.at<float>(0,0) + 4.3; 
-				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
-				break; 
-			case 4:
-				positionPtr->x_pos = Tvec.at<float>(0,0) + 6.0; 
-				positionPtr->y_pos = 1.9 - Tvec.at<float>(2,0); 
-				break; 
-		}
-		cout << "X Pos = " << positionPtr->x_pos << endl; 
-		cout << "Y Pos = " << positionPtr->y_pos << endl; 
-		positionPtr->angle = z_angle; 
-		cout << "Angle = " << positionPtr->angle << endl; 
+                // Calculating current location based off of marker(s) seen
+                marker_location = coordinates.getCoords(TheMarkers[i].id);
+                positionPtr->location.x = marker_location + Tvec.at<float>(0,0);
+                positionPtr->location.y = marker_location - Tvec.at<float>(2,0);
+                positionPtr.locaiton.angle = z_angle;
 
-		//write the distance to memory at address 2000
-		sem_post(sem);
+				cout << "X Pos = " << positionPtr->location.x << endl;
+				cout << "Y Pos = " << positionPtr->location.y << endl;
+				cout << "Angle = " << positionPtr->locaiton.angle << endl;
+
+				//write the distance to memory at address 2000
+				sem_post(sem);
             }
 
             // draw a 3d cube in each marker if there is 3d info
 	    
             if (TheCameraParameters.isValid() && TheMarkerSize > 0)
-                for (unsigned int i = 0; i < TheMarkers.size(); i++)
-                {
+                for (unsigned int i = 0; i < TheMarkers.size(); i++) {
                     CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                     CvDrawingUtils::draw3dAxis(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
                 }
@@ -316,11 +310,12 @@ int main(int argc, char** argv)
             key = cv::waitKey(waitTime);  // wait for key to be pressed
             if (key == 's')
                 waitTime = waitTime == 0 ? 10 : 0;
-            if (key == 'w'){//writes current input image
+            if (key == 'w'){
+	            //writes current input image
                 string number=std::to_string(indexSave++);
                 while(number.size()!=3)number="0"+number;
                 string imname="arucoimage"+number+".png";
-//                cv::imwrite(imname,TheInputImage);
+				//cv::imwrite(imname,TheInputImage);
                 cv::imwrite(imname,TheInputImageCopy);
                 cout<<"saved "<<imname<<endl;
                 imname="orgimage"+number+".png";
@@ -337,10 +332,11 @@ int main(int argc, char** argv)
                     cv::resizeWindow("in",640,480);
                 }
             }
-            if (key=='h')bPrintHelp=!bPrintHelp;
+            if (key=='h')
+	            bPrintHelp=!bPrintHelp;
 
-            if (key=='t'){//run a deeper speed test
-
+            if (key=='t'){
+	            //run a deeper speed test
                 for(int t=0;t<30;t++){
                     // Detection of markers in the image passed
                     Fps.start();
@@ -349,35 +345,32 @@ int main(int argc, char** argv)
                     // chekc the speed by calculating the mean speed of all iterations
                 }
                 printInfo(TheInputImageCopy);
-
             }
             index++;  // number of images captured
 
             if (isVideo)
-                if ( TheVideoCapturer.grab()==false) key=27;
-		
+                if ( TheVideoCapturer.grab()==false)
+	                key=27;
+
         } while (key != 27 );
     }
-    catch (std::exception& ex)
-
-    {
+    catch (std::exception& ex) {
         cout << "Exception :" << ex.what() << endl;
     }
 }
 
 
-void cvTackBarEvents(int pos, void*)
-{
+void cvTackBarEvents(int pos, void*) {
     (void)(pos);
-
 
     setParamsFromGlobalVariables(MDetector);
 
     // recompute
-        Fps.start();
-        MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters);
-        Fps.stop();
-    // chekc the speed by calculating the mean speed of all iteration
+    Fps.start();
+    MDetector.detect(TheInputImage, TheMarkers, TheCameraParameters);
+    Fps.stop();
+
+    // check the speed by calculating the mean speed of all iteration
     TheInputImage.copyTo(TheInputImageCopy);
     if (iShowAllCandidates){
         auto candidates=MDetector.getCandidates();
@@ -394,8 +387,8 @@ void cvTackBarEvents(int pos, void*)
     if (TheCameraParameters.isValid())
         for (unsigned int i = 0; i < TheMarkers.size(); i++)
             CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
-    //cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
 
+    //cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
     //cv::imshow("in",  TheInputImageCopy );
     //cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
 }

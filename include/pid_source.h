@@ -15,21 +15,20 @@
 	Author website: http://www.geekfactory.mx
 	Author e-mail: ruben at geekfactory dot mx
  */
-/*-------------------------------------------------------------*/
+
+// Modified & reimplemented by Nicholas Arnold
+
 /*		Includes and dependencies			*/
-/*-------------------------------------------------------------*/
-#include "time.h"
+
+#include <time.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdio.h>
+#include "CoordinateMap.h"
 
-
-/*-------------------------------------------------------------*/
-/*		Macros and definitions				*/
-/*-------------------------------------------------------------*/
-
-/*-------------------------------------------------------------*/
 /*		Typedefs enums & structs			*/
-/*-------------------------------------------------------------*/
 
 
 /**
@@ -44,26 +43,36 @@ enum pid_control_directions {
  * Structure that holds PID all the PID controller data, multiple instances are
  * posible using different structures for each controller
  */
+
 struct pid_controller {
 	// Input, output and shared_position
-	float * input; //!< Current coordinate of unit
-	float * output; //!< Corrective Output from PID Controller
-	float * setpoint; //!< Current goal destination point
+	struct coordinate * input; // Current coordinate of unit
+	struct coordinate * setpoint; // Current goal destination point
+	float * output; // Corrective Output from PID Controller
+
 	// Tuning parameters
-	float Kp; //!< Stores the gain for the Proportional term
-	float Ki; //!< Stores the gain for the Integral term
-	float Kd; //!< Stores the gain for the Derivative term
+	float Kp; // Stores the gain for the Proportional term
+	float Ki; // Stores the gain for the Integral term
+	float Kd; // Stores the gain for the Derivative term
+
+	// Current Error
+	float current_err;
+
 	// Output minimum and maximum values
-	float omin; //!< Maximum value allowed at the output
-	float omax; //!< Minimum value allowed at the output
+	float out_min; // Maximum value allowed at the output
+	float out_max; // Minimum value allowed at the output
+
 	// Variables for PID algorithm
-	float iterm; //!< Accumulator for integral term
-	float lastin; //!< Last input value for differential term
+	float iterm; // Accumulator for integral term
+	struct coordinate lastin; //  Last input value for differential term
+
 	// Time related
-	clock_t lasttime; //!< Stores the time when the control loop ran last time
-	clock_t sampletime; //!< Defines the PID sample time
+	clock_t lasttime; // Stores the time when the control loop ran last time
+	clock_t sampletime; // Defines the PID sample time
+
 	// Operation mode
-	uint8_t automode; //!< Defines if the PID controller is enabled or disabled
+	uint8_t automode; // Defines if the PID controller is enabled or disabled
+	bool angle; // Determines if PID controller is measuring angular error or distance
 	enum pid_control_directions direction;
 };
 
@@ -82,16 +91,17 @@ extern "C" {
  * variables. Also we set the tuning parameters
  *
  * @param pid A pointer to a pid_controller structure
- * @param in Pointer to float value for the process input
- * @param out Poiter to put the controller output value
- * @param set Pointer float with the process setpoint value
+ * @param input Pointer to a struct containing x, y, angle, representing current position
+ * @param out Pointer to put the controller output value
+ * @param set Pointer to a struct containing x, y, angle, representing desired position
  * @param kp Proportional gain
  * @param ki Integral gain
  * @param kd Diferential gain
  *
  * @return returns a pid_t controller handle
  */
-pid_ct pid_create(pid_ct pid, float* in, float* out, float* set, float kp, float ki, float kd);
+pid_ct pid_create(pid_ct pid, struct coordinate *input, float *output, struct coordinate *setpoint, float kp, float ki,
+                  float kd, bool angle);
 
 /**
  * @brief Check if PID loop needs to run
@@ -102,7 +112,7 @@ pid_ct pid_create(pid_ct pid, float* in, float* out, float* set, float kp, float
  *
  * @return return Return true if PID control algorithm is required to run
  */
-bool pid_need_compute(pid_ct pid);
+bool pid_need_compute(pid_ct pid); // not working right now on nvidia??
 
 /**
  * @brief Computes the output of the PID control
