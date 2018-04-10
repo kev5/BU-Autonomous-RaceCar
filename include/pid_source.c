@@ -52,8 +52,8 @@ float normal_diff(float current, float last){
 	return ((current > PI/2 && last < -PI/2) ||(current < -PI/2 && last > PI/2))? (sign(current)*(PI-abs(current-last))):(current - last);
 }
 
-float eucledian_dist(struct coordinate * current, struct coordinate * last){
-	return (float)pow(pow(current->x - last->x, 2) + pow(current->y - last->y, 2), 0.5);
+float eucledian_dist(struct coordinate current, struct coordinate last){
+	return (float)pow(pow(current.x - last.x, 2) + pow(current.y - last.y, 2), 0.5);
 }
 
 void pid_compute(pid_ct pid) {
@@ -63,16 +63,16 @@ void pid_compute(pid_ct pid) {
 
 	float error;
 	float dinput;
-	struct coordinate *current = (pid->input);
-	struct coordinate *set = pid->setpoint;
-	struct coordinate *last = pid->lastin;
+	struct coordinate current = *(pid->input);
+	struct coordinate set = *(pid->setpoint);
+	struct coordinate last = pid->lastin;
 
 
 	if(pid->angle){
 		// For angles...
-		float alpha = (set->y > 0) ? (atan(set->x/set->y)) : sign(set->x)*atan(abs(set->y/set->x) + PI/2);
-		dinput = normal_diff(current->angle, last->angle);
-		error = normal_diff(alpha, current->angle);
+		float alpha = (set.y > 0) ? (atan(set.x/set.y)) : sign(set.x)*atan(abs(set.y/set.x) + PI/2);
+		dinput = normal_diff(current.angle, last.angle);
+		error = normal_diff(current.angle, alpha);
 	} else{
 		// For distances...
 		error = eucledian_dist(set,current);
@@ -160,7 +160,7 @@ void pid_auto(pid_ct pid) {
 	// If going from manual to auto
 	if (!pid->automode) {
 		pid->iterm = *(pid->output);
-		pid->lastin = pid->input;
+		pid->lastin = *(pid->input);
 		if (pid->iterm > pid->out_max)
 			pid->iterm = pid->out_max;
 		else if (pid->iterm < pid->out_min)

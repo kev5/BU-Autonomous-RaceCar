@@ -115,8 +115,8 @@ int main() {
 
 		// Update output throttle & steering to shared memory
 		sem_post(servo_sem);
-		printf("Distance from dest: %f. Angle difference: %f", throttle_controller->current_err, steering_controller->current_err);
-		printf("Throttle: %f , Steering: %f ", throttle_output, steer_output);
+		printf("Distance from dest: %f. Angle difference: %f \n", throttle_controller->current_err, steering_controller->current_err);
+		printf("Throttle: %f , Steering: %f \n", throttle_output, steer_output);
 	}
 	return 0;
 }

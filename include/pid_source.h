@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-#include "CoordinateMap.h"
 
 #define PI 3.14159265
 
