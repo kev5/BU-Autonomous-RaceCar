@@ -1,16 +1,19 @@
 CC= gcc
 CFLAGS= -lrt -pthread -lm
-DEPS = setpoint.h
+DEPS = pid_params.h shared_def.h pid_source.h CoordinateMap.h
 ODIR = obj
-OBJ = pid_source.o pid2d_main.o 
+TARGET = command pid2d_main
+INCDIR = ../include
 
-%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+all: $(TARGET)
 
-pid2d_test: $(OBJ)
-	gcc -o $@ $^ $(CFLAGS)
+%.o: %.c $(INCDIR)/$(DEPS)
+	$(CC) -I $(INCDIR) -c -o $@ $< $(CFLAGS)
+
+$(TARGET): $(TARGET).o
+	gcc -I $(INCDIR) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean
 
 clean:
-	rm -f $(odir)/*.o *~ core $(INCDIR)/*~
+	rm -f ./*.o ./*~ $(TARGET)

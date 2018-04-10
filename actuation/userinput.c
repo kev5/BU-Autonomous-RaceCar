@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #define DEV_PATH  "/dev/PWM_OUT"
 #include <stdlib.h>
-#include "shared_def.h"
+#include "../include/shared_def.h"
 #include <semaphore.h>
 
 #define SERVOSEM "/servosemaphore"

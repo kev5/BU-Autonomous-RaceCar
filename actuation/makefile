@@ -1,6 +1,6 @@
 CC= gcc
 CFLAGS= -lrt -pthread -lm
-DEPS = setpoint.h
+DEPS = shared_def.h
 ODIR = obj
 TARGET = command
 INCDIR = ../include
