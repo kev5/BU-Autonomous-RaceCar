@@ -7,5 +7,5 @@ add_executable(PID
         pid2d_main.c
         pid_source.c
         ../include/pid_source.h
-        ../include/pid_params.h
+        ../include/pid_source.h
         )
