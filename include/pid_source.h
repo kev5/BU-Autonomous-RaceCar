@@ -64,7 +64,7 @@ struct pid_controller {
 
 	// Variables for PID algorithm
 	float iterm; // Accumulator for integral term
-	struct coordinate lastin; //  Last input value for differential term
+	struct coordinate * lastin; //  Last input value for differential term
 
 	// Time related
 	clock_t lasttime; // Stores the time when the control loop ran last time
