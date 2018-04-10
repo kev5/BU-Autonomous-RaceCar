@@ -115,11 +115,11 @@ int main() {
 
 		// Update output throttle & steering to shared memory
 		sem_post(servo_sem);
-        printf("Car X: %f, Y: %f, Theta: %f \n",pid_inputs->location.x,pid_inputs->location.y,pid_inputs->location.angle);
+        printf("Car X: %f, Y: %f, Theta: %f    ",pid_inputs->location.x,pid_inputs->location.y,pid_inputs->location.angle);
         float alpha = (pid_inputs->setpoint.y > 0) ? (atan(pid_inputs->setpoint.x/pid_inputs->setpoint.y)) :
                       sign(pid_inputs->setpoint.x)*atan(abs(pid_inputs->setpoint.y/pid_inputs->setpoint.x) + PI/2);
-        printf("Position X: %f, Y: %f, Alpha: %f \n",pid_inputs->setpoint.x,pid_inputs->setpoint.y, alpha);
-		printf("Distance from dest: %f. Angle difference: %f \n", throttle_controller->current_err, steering_controller->current_err);
+        printf("Position X: %f, Y: %f, Alpha: %f    ",pid_inputs->setpoint.x,pid_inputs->setpoint.y, alpha);
+		printf("Distance: %f. Angle diff: %f   ", throttle_controller->current_err, steering_controller->current_err);
 		//printf("Throttle: %f , Steering: %f \n", throttle_output, steer_output);
 	}
 	return 0;
