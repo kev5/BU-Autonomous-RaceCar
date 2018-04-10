@@ -16,13 +16,36 @@ struct coordinate {
 
 class CoordinateMap{
 public:
-    CoordinateMap();
+    CoordinateMap(){
+        // Initiate Coordinate Map with already known coordinates
+        coordinate twentytwo; twentytwo.x = 2.4 ;twentytwo.y = 1.9;
+        coordinate seven; seven.x = 4.3; seven.y = 1.9;
+        coordinate four; four.x = 6.0; seven.y = 1.9;
 
-    coordinate getCoords(int marker);
-    void add_marker(int value, coordinate position);
+        add_marker(22 ,twentytwo);
+        add_marker(7, seven);
+        add_marker(4, four);
+        // TODO: Serialization to permanently store newly created markers programmatically
+    };
+
+    coordinate getCoords(int marker){
+        std::map<int,coordinate>::iterator it;
+        it = aruco_map.find(marker);
+
+        if(it != aruco_map.end()){
+            return it->second;
+        }
+        else{
+            return nullptr;
+        }
+    };
+
+    void add_marker(int value, coordinate position){
+        aruco_map.insert(std::pair<int, coordinate>(value,position));
+    };
 
 private:
-    std::map<int, coordinate> aruco_map;
+    std::map<int, Coordinate> aruco_map;
 
 };
 
