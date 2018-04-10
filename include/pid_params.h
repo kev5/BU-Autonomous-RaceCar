@@ -2,8 +2,8 @@
 // Created by Nicholas Arnold on 3/21/18.
 //
 
-#ifndef PID_SHARED_POS_H
-#define PID_SHARED_POS_H
+#ifndef BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
+#define BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
 
 #include "CoordinateMap.h"
 
@@ -21,4 +21,4 @@ struct pid_params{
 	// TODO: Setting true will enable PID
 	bool active;
 };
-#endif //PID_SHARED_POS_H
+#endif //BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
