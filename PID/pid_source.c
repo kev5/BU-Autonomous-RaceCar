@@ -43,6 +43,19 @@ bool pid_need_compute(pid_ct pid) {
 	return(clock() - pid->lasttime >= pid->sampletime) ? true : false;
 }
 
+int sign(float x){
+	if (x < 0) return -1;
+	return 1;
+}
+
+float normal_diff(float current, float last){
+	return ((current > PI/2 && last < -PI/2) ||(current < -PI/2 && last > PI/2))? (sign(current)*(PI-abs(current-last))):(current - last);
+}
+
+float eucledian_dist(coordinate current, coordinate last){
+	return (float)pow(pow(current.x - last.x, 2) + pow(current.y - last.y, 2), 0.5);
+}
+
 void pid_compute(pid_ct pid) {
 	// Check if control is enabled
 	if (!pid->automode)
@@ -54,12 +67,17 @@ void pid_compute(pid_ct pid) {
 	struct coordinate set = *(pid->setpoint);
 	struct coordinate last = pid->lastin;
 
-	// Measuring error & deriv. are different for distance & angle
 
-	// Error is merely difference b/t angles, but need to calc. euclidean distance between coords.
-	error = (pid->angle) ? (set.angle - current.angle) : (float) pow(pow(set.x - current.x, 2) + pow(set.y - current.y, 2), 0.5);
-	// Dinput is merely difference b/t current, last angle, but need to calculate euclidean distance between coords.
-	dinput = (pid->angle) ? (current.angle - last.angle) : (float) pow(pow(current.x - last.x, 0.5) + pow(current.y - last.y, 0.5), 2);
+	if(pid->angle){
+		// For angles...
+		float alpha = (set.y > 0) ? (atan(set.x/set.y)) : sign(set.x)*atan(abs(set.y/set.x) + PI/2);
+		dinput = normal_diff(current.angle, last.angle);
+		error = normal_diff(current.angle, alpha);
+	} else{
+		// For distances...
+		error = eucledian_dist(set,current);
+		dinput = eucledian_dist(current,last);
+	}
 
 	// Store current error in structure
 	pid->current_err = error;
