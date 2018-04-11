@@ -31,7 +31,6 @@
 
 /*		Typedefs enums & structs			*/
 
-
 /**
  * Defines if the controler is direct or reverse
  */
@@ -41,37 +40,38 @@ enum pid_control_directions {
 };
 
 /**
- * Structure that holds PID all the PID controller data, multiple instances are
+ * Structures that hold PID all the PID controller data, multiple instances are
  * posible using different structures for each controller
  */
 
 struct coordinate {
-	float x;
-	float y;
-	float angle;
+	double x;
+	double y;
+	double angle;
 };
 
 struct pid_controller {
 	// Input, output and shared_position
 	struct coordinate * input; // Current coordinate of unit
 	struct coordinate * setpoint; // Current goal destination point
-	float * output; // Corrective Output from PID Controller
+	double * steer_out;
+	double * throttle_out; // Corrective Output from PID Controller
 
 	// Tuning parameters
-	float Kp; // Stores the gain for the Proportional term
-	float Ki; // Stores the gain for the Integral term
-	float Kd; // Stores the gain for the Derivative term
+	double aKp, dKp; // Stores the gain for the Proportional term
+	double aKi, dKi; // Stores the gain for the Integral term
+	double aKd, dKd; // Stores the gain for the Derivative term
 
 	// Current Error
-	float current_err;
+	double ang_err, dst_error;
 
 	// Output minimum and maximum values
-	float out_min; // Maximum value allowed at the output
-	float out_max; // Minimum value allowed at the output
+	double out_min; // Maximum value allowed at the output
+	double out_max; // Minimum value allowed at the output
 
 	// Variables for PID algorithm
-	float iterm; // Accumulator for integral term
-	struct coordinate * lastin; //  Last input value for differential term
+	double a_int, d_int; // Accumulators for integral term
+	struct coordinate *lastin; //  Last input value for differential term
 
 	// Time related
 	clock_t lasttime; // Stores the time when the control loop ran last time
@@ -79,7 +79,6 @@ struct pid_controller {
 
 	// Operation mode
 	uint8_t automode; // Defines if the PID controller is enabled or disabled
-	bool angle; // Determines if PID controller is measuring angular error or distance
 	enum pid_control_directions direction;
 };
 
@@ -107,8 +106,8 @@ extern "C" {
  *
  * @return returns a pid_t controller handle
  */
-pid_ct pid_create(pid_ct pid, struct coordinate *input, float *output, struct coordinate *setpoint, float kp, float ki,
-                  float kd, bool angle);
+pid_ct pid_create(pid_ct pid, struct coordinate *current_pos, struct coordinate *setpoint, float dKp, float dKi, float dKd,
+                  float aKp, float aKi, float aKd, double *steer_out, double *throttle_out);
 
 /**
  * @brief Check if PID loop needs to run
@@ -138,11 +137,11 @@ void pid_compute(pid_ct pid);
  * terms.
  *
  * @param pid The PID controller instance to modify
- * @param kp Proportional gain
- * @param ki Integral gain
- * @param kd Derivative gain
+ * @param dKp Proportional gain
+ * @param dKi Integral gain
+ * @param dKd Derivative gain
  */
-void pid_tune(pid_ct pid, float kp, float ki, float kd);
+void pid_tune(pid_ct pid, float dKp, float dKi, float dKd, float aKp, float aKi, float aKd);
 
 /**
  * @brief Sets the pid algorithm period
@@ -182,6 +181,7 @@ void pid_auto(pid_ct pid);
  *
  * @param pid The PID controller instance to disable
  */
+
 void pid_manual(pid_ct pid);
 
 /**
@@ -197,7 +197,13 @@ void pid_manual(pid_ct pid);
  */
 void pid_direction(pid_ct pid, enum pid_control_directions dir);
 
-int sign(float x);
+/**
+ *
+ * @param x
+ * @return 1 if >0 else 0
+ */
+int sign(double x);
+
 
 #ifdef	__cplusplus
 }

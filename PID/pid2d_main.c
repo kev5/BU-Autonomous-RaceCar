@@ -2,84 +2,92 @@
 // Created by Nicholas Arnold.
 //
 
+// System level includes
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include <semaphore.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 
+// Project file level includes
 #include "../include/pid_source.h"
 #include "../include/pid_params.h"
 #include "../include/shared_def.h"
 
-#define DEV_PATH  "/dev/PWM_OUT"
+// Shared memory includes
 #define SERVOSEM "/servosemaphore"
 #define POSITSEM "/position_sem"
 #define SHM_SIZE 4096
 
-
-struct pid_controller throttle_ctrldata;
-struct pid_controller steering_ctrldata;
-
+// Variables to store control data for PID
+struct pid_controller ctrldata;
 struct coordinate location;
 struct coordinate setpoint;
-
-pid_ct throttle_controller;
-pid_ct steering_controller;
-
+pid_ct controller;
+double throttle_output = 0, steer_output = 0;
 bool run, throttle_active, steer_active;
 
 // Initial p, i, d values will be refined by actual live testing.. will tune these params from live testing
-float throttle_kp = 0.2, throttle_ki = 0, throttle_kd = 0;
-float steering_kp = 0.5, steering_ki = 0, steering_kd = 0;
+float dKp = 0.2, dKi = 0, dKd = 0, aKp = 0.5, aKi = 0, aKd = 0;
 
-// Variables for PID to access, updated from shared mem..
-float throttle_output = 0, steer_output = 0;
+// Shared Memory Variables
+sem_t *servo_sem;
+sem_t *pos_sem;
+int servo_fid;
+int pos_fid;
+void *servo_ptr;
+void *pos_ptr;
 
 
 int main() {
-	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
-	sem_t *servo_sem = sem_open(SERVOSEM, 1);
-	sem_t *pos_sem = sem_open(POSITSEM,1);
-	if (servo_sem == SEM_FAILED | pos_sem == SEM_FAILED){
-		perror("semaphore open error in userinput\n");
-	}
+	char mem;
+	printf("Testing without shared mem? (y/n): ");
+	scanf("%c", &mem);
+	getchar();
 
-	int servo_fid = shm_open("racecar", O_CREAT|O_RDWR, 0666);
-	int pos_fid = shm_open("position", O_CREAT|O_RDWR, 2000);
-	if (servo_fid == -1 |pos_fid == -1){
-		perror("shm_open error\n");
-		return -1;
-	}
+	if (mem != 'y'){
+		/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
+		sem_t *servo_sem = sem_open(SERVOSEM, 1);
+		sem_t *pos_sem = sem_open(POSITSEM, 1);
+		if (servo_sem == SEM_FAILED | pos_sem == SEM_FAILED) {
+			char err[50];
+			snprintf(err, sizeof(err), "%s%s%s", "Semaphore open error with ", (servo_sem== SEM_FAILED)?"servo semaphore.":"pos semaphore.", "\n");
+			perror(err);
+		}
 
-	void *servo_ptr = mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, servo_fid, 0);
-	void *pos_ptr = mmap(NULL,SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED,pos_fid,0);
-	if (servo_ptr == MAP_FAILED | pos_ptr == MAP_FAILED){
-		perror("mmap error\n");
-		exit(-1);
-	}
+		servo_fid = shm_open("racecar", O_CREAT | O_RDWR, 0666);
+		pos_fid = shm_open("position", O_CREAT | O_RDWR, 2000);
+		if (servo_fid == -1 | pos_fid == -1) {
+			char err[50];
+			sprintf(err, sizeof(err), "%s%s%s", "Shared mem open error with ", (servo_fid == -1)?"servo memory.":"pos memory.", "\n");
+			perror(err);
+			return -1;
+		}
 
+		servo_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, servo_fid, 0);
+		pos_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pos_fid, 0);
+		if (servo_ptr == MAP_FAILED | pos_ptr == MAP_FAILED) {
+			char err[50];
+			sprintf(err, sizeof(err), "%s%s%s", "Memory map error with ", (servo_ptr==MAP_FAILED)?"servo memory.":"positon memory.", "\n");
+			perror("mmap error\n");
+			exit(-1);
+		}
+	}
 	struct throttle_steer *actuation_vals = (struct throttle_steer *)servo_ptr;
 	struct pid_params *pid_inputs = (struct pid_params *)pos_ptr;
 
 	location = pid_inputs->location; setpoint = pid_inputs->setpoint;
 
-	/*                 Initializing PID controllers               */
-	throttle_controller = pid_create(&throttle_ctrldata, &location, &throttle_output, &setpoint, throttle_kp,
-	                                 throttle_ki, throttle_kd, false);
-	steering_controller = pid_create(&steering_ctrldata, &location, &steer_output, &setpoint, steering_kp,
-	                                 steering_ki, steering_kd, true);
+	/*                 Initializing PID controller               */
+	// Location is in form (X_car, Y_car, Theta_car) where theta car is radians from +y
+	// Setpoint is in fomm (X_set, Y_set, 0)
+	// Kp,Ki,Kd are proportional, integral, and derivative parameters for dist & angle respectively
+	// steer_output and throttle_output are values calculated by PID, pushed to shared mem for actuation
+	controller = pid_create(&ctrldata, &location, &setpoint, dKp, dKi, dKd, aKp, aKi, aKd, &steer_output, &throttle_output);
+	pid_auto(controller);
+	pid_change_limits(controller, -1, 1);
 
-	pid_auto(throttle_controller); pid_auto(steering_controller);
-	pid_change_limits(throttle_controller, -1, 1); pid_change_limits(steering_controller, -1, 1);
-
-	// FIX ??
+	/* Prompt to see which controls to enable */
 	char t, s;
 	throttle_active = false;
 	steer_active = false;
@@ -101,26 +109,23 @@ int main() {
 	run = true; // hard-coding to true. eventually some control could switch
 	while (run) {
 		sem_wait(servo_sem);
+		// Get location info from shared mem, compute PID, updated wanted results
 		location = pid_inputs->location;
 		setpoint = pid_inputs->setpoint;
+		pid_compute(controller);
 
 		if(throttle_active){
-			pid_compute(throttle_controller);
-			actuation_vals->throttle = throttle_output;
+			actuation_vals->throttle = (float) throttle_output;
 		}
 		if(steer_active){
-			pid_compute(steering_controller);
-			actuation_vals->steer = steer_output;
+			actuation_vals->steer = (float) steer_output;
 		}
 
 		// Update output throttle & steering to shared memory
 		sem_post(servo_sem);
-        printf("Car X: %f, Y: %f, Theta: %f    ",pid_inputs->location.x,pid_inputs->location.y,pid_inputs->location.angle);
-        float alpha = (pid_inputs->setpoint.y > 0) ? (atan(pid_inputs->setpoint.x/pid_inputs->setpoint.y)) :
-                      sign(pid_inputs->setpoint.x)*atan(abs(pid_inputs->setpoint.y/pid_inputs->setpoint.x) + PI/2);
-        printf("Position X: %f, Y: %f, Alpha: %f    ",pid_inputs->setpoint.x,pid_inputs->setpoint.y, alpha);
-		printf("Distance: %f. Angle diff: %f   ", throttle_controller->current_err, steering_controller->current_err);
-		//printf("Throttle: %f , Steering: %f \n", throttle_output, steer_output);
+		// Update Results to the terminal in easy to read:
+		printf("(X,Y,Ang).. C:(%f, %f, %f) S:(%f, %f).. [Err,Out] Dist:[%f, %f] Steer:[%f, %f] \n",location.x,location.y,
+		       location.angle,setpoint.x,setpoint.y, controller->dst_error,throttle_output,controller->ang_err,steer_output);
 	}
 	return 0;
 }
