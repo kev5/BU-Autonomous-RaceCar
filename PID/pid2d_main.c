@@ -40,39 +40,28 @@ void *pos_ptr;
 
 
 int main() {
-	char mem;
-	printf("Testing without shared mem? (y/n): ");
-	scanf("%c", &mem);
-	getchar();
 
-	if (mem != 'y'){
-		/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
-		sem_t *servo_sem = sem_open(SERVOSEM, 1);
-		sem_t *pos_sem = sem_open(POSITSEM, 1);
-		if (servo_sem == SEM_FAILED | pos_sem == SEM_FAILED) {
-			char err[50];
-			snprintf(err, sizeof(err), "%s%s%s", "Semaphore open error with ", (servo_sem== SEM_FAILED)?"servo semaphore.":"pos semaphore.", "\n");
-			perror(err);
-		}
-
-		servo_fid = shm_open("racecar", O_CREAT | O_RDWR, 0666);
-		pos_fid = shm_open("position", O_CREAT | O_RDWR, 2000);
-		if (servo_fid == -1 | pos_fid == -1) {
-			char err[50];
-			sprintf(err, sizeof(err), "%s%s%s", "Shared mem open error with ", (servo_fid == -1)?"servo memory.":"pos memory.", "\n");
-			perror(err);
-			return -1;
-		}
-
-		servo_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, servo_fid, 0);
-		pos_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pos_fid, 0);
-		if (servo_ptr == MAP_FAILED | pos_ptr == MAP_FAILED) {
-			char err[50];
-			sprintf(err, sizeof(err), "%s%s%s", "Memory map error with ", (servo_ptr==MAP_FAILED)?"servo memory.":"positon memory.", "\n");
-			perror("mmap error\n");
-			exit(-1);
-		}
+	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
+	sem_t *servo_sem = sem_open(SERVOSEM, 1);
+	sem_t *pos_sem = sem_open(POSITSEM, 1);
+	if (servo_sem == SEM_FAILED | pos_sem == SEM_FAILED) {
+		perror("Semaphore open error. \n");
 	}
+
+	servo_fid = shm_open("racecar", O_CREAT | O_RDWR, 0666);
+	pos_fid = shm_open("position", O_CREAT | O_RDWR, 2000);
+	if (servo_fid == -1 | pos_fid == -1) {
+		perror("Shared mem open error. \n");
+		return -1;
+	}
+
+	servo_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, servo_fid, 0);
+	pos_ptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, pos_fid, 0);
+	if (servo_ptr == MAP_FAILED | pos_ptr == MAP_FAILED) {
+		perror("Memory map error. \n");
+		exit(-1);
+	}
+
 	struct throttle_steer *actuation_vals = (struct throttle_steer *)servo_ptr;
 	struct pid_params *pid_inputs = (struct pid_params *)pos_ptr;
 
