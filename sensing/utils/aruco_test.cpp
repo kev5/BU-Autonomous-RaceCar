@@ -216,8 +216,8 @@ int main(int argc, char** argv) {
 		sem = sem_open("/position_sem",1);
 
         // Hardcoding setpoint:
-		positionPtr->setpoint.x = 5.8;
-        positionPtr->setpoint.y = 2.4;
+        positionPtr->setpoint.x = 4.3;
+        positionPtr->setpoint.y = 1.9;
         positionPtr->setpoint.angle = 0;
 
 	    // capture until press ESC or until the end of the video

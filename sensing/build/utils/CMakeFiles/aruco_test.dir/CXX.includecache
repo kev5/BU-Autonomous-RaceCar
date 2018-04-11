@@ -115,8 +115,8 @@ map
 -
 
 /home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h
-CoordinateMap.h
-/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
+pid_source.h
+/home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
 
 /home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
 time.h
@@ -131,8 +131,6 @@ math.h
 -
 stdio.h
 -
-CoordinateMap.h
-/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
 
 /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_test.cpp
 aruco.h
