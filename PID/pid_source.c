@@ -17,13 +17,13 @@
 
 // Modified & reimplemented by Nicholas Arnold
 
-pid_ct pid_create(pid_ct pid, struct coordinate *in, float *out, struct coordinate *set, float kp, float ki, float kd,
-                  bool angle) {
-	pid->input = in;
-	pid->output = out;
-	pid->setpoint = set;
+pid_ct pid_create(pid_ct pid, struct coordinate *current_pos, struct coordinate *setpoint, float dKp, float dKi, float dKd,
+                  float aKp, float aKd, float aKi, double *steer_out, double *throttle_out) {
+	pid->input = current_pos;
+	pid->setpoint = setpoint;
+	pid->steer_out = steer_out;
+	pid->throttle_out = throttle_out;
 	pid->automode = false;
-	pid->angle = angle;
 
 	pid_change_limits(pid, 0, 255);
 
@@ -31,7 +31,7 @@ pid_ct pid_create(pid_ct pid, struct coordinate *in, float *out, struct coordina
 	pid->sampletime = 100 * (CLOCKS_PER_SEC / 1000);
 
 	pid_direction(pid, E_PID_DIRECT);
-	pid_tune(pid, kp, ki, kd);
+	pid_tune(pid, dKp, dKi, dKd, aKp, aKi, aKd);
 
 	pid->lasttime = clock() - pid->sampletime;
 
@@ -43,18 +43,19 @@ bool pid_need_compute(pid_ct pid) {
 	return(clock() - pid->lasttime >= pid->sampletime) ? true : false;
 }
 
-int sign(float x){
-	if (x < 0) return -1;
-	return 1;
+int sign(double x){
+    return x >= 0;
 }
 
-float normal_diff(float current, float last){
-	return ((current > PI/2 && last < -PI/2) ||(current < -PI/2 && last > PI/2))?
-           (sign(current)*(2*PI-abs(current-last))):(current - last);
-}
 
-float eucledian_dist(struct coordinate * current, struct coordinate * last){
+double eucledian_dist(struct coordinate *current, struct coordinate *last){
 	return (float)pow(pow(current->x - last->x, 2) + pow(current->y - last->y, 2), 0.5);
+}
+
+double check_bounds(pid_ct pid,double value){
+	value = (value > pid->out_max) ? pid->out_max : value;
+	value = (value < pid->out_min) ? pid->out_min : value;
+	return value;
 }
 
 void pid_compute(pid_ct pid) {
@@ -62,75 +63,94 @@ void pid_compute(pid_ct pid) {
 	if (!pid->automode)
 		return;
 
-	float error;
-	float dinput;
+	double ang_err = 0, dst_error = 0;
+	double d_ang = 0, d_dst = 0;
 	struct coordinate *current = pid->input;
 	struct coordinate *set = pid->setpoint;
 	struct coordinate *last = pid->lastin;
 
+    /* Normalizing angles to polar system */
+    struct coordinate *set2 = set;
+    set2->x = set->x - current->x;
+    set2->y = set->y - current->y;
 
-	if(pid->angle){
-		// For angles...
-		float alpha = (set->y > 0) ? (atan(set->x/set->y)) : sign(set->x)*atan(abs(set->y/set->x) + PI/2);
-		dinput = normal_diff(current->angle, last->angle);
-		error = normal_diff(alpha, current->angle);
-	} else{
-		// For distances...
-		error = eucledian_dist(set,current);
-		dinput = eucledian_dist(current,last);
-	}
+    set2->angle = atan(set2->y/set2->x);
+    if(!sign(set2->x)){
+        set2->angle += PI/2;
+    } else if(sign(set2->x) & !sign(set2->y)){
+        set2->angle += 2*PI;
+    }
+    if(!sign(current->angle)){
+        current->angle = (PI/2) + fabs(current->angle);
+    } else if(sign(current->angle) && current->angle <= PI/2){
+        current->angle = (PI/2) - current->angle;
+    } else{
+        current->angle = (2*PI) - current->angle;
+    }
+
+    /* Getting angular error */
+	ang_err = set2->angle - current->angle;
+    if(fabs(ang_err) > 2*PI){
+        ang_err = (ang_err > 0) ? (2*PI - ang_err) : (ang_err - 2*PI);
+    }
+
+    // Getting distance error, if its behind us: abs(ang_err) > PI/2
+    dst_error = eucledian_dist(current,last);
 
 	// Store current error in structure
-	pid->current_err = error;
+	pid->ang_err = ang_err;
+	pid->dst_error = dst_error;
 
-	// Compute integral
-	pid->iterm += (pid->Ki * error);
-	if (pid->iterm > pid->out_max) {
-		pid->iterm = pid->out_max;
-	}
-	else if (pid->iterm < pid->out_min) {
-		pid->iterm = pid->out_min;
-	}
+	// Compute integrals & making sure they're within bound
+	pid->a_int += (pid->aKi * ang_err);
+	pid->d_int += (pid->dKi * dst_error);
+	pid->a_int = check_bounds(pid, pid->a_int);
+	pid->d_int = check_bounds(pid, pid->d_int);
 
-	// Compute PID output
-	float out = pid->Kp * error + pid->iterm - pid->Kd * dinput;
-
-	// Apply limit to output value
-	out = (out > pid->out_max) ? pid->out_max : out;
-	out = (out < pid->out_min) ? pid->out_min : out;
-
-	// Update structure's pointer
-	(*pid->output) = out;
+	// Compute PID output, make sure its within bound update pointer
+	double steer_out = pid->aKp * ang_err + pid->a_int - pid->aKd * d_ang;
+	double throttle_out = pid->dKp * dst_error + pid->d_int - pid->dKd * d_dst;
+	(*pid->steer_out) = check_bounds(pid, steer_out);
+	(*pid->throttle_out) = check_bounds(pid, throttle_out);
 
 	// Keep track of some variables for next execution
 	pid->lasttime = clock();
 	pid->lastin = current;
 }
 
-void pid_tune(pid_ct pid, float kp, float ki, float kd) {
+void pid_tune(pid_ct pid, float dKp, float dKi, float dKd, float aKp, float aKi, float aKd) {
 	// Check for validity
-	if (kp < 0 || ki < 0 || kd < 0)
+	if (dKp < 0 || dKi < 0 || dKd < 0)
 		return;
 
 	//Compute sample time in seconds
 	float ssec = ((float) pid->sampletime) / ((float) CLOCKS_PER_SEC);
 
-	pid->Kp = kp;
-	pid->Ki = ki * ssec;
-	pid->Kd = kd / ssec;
+	// Setting parameter values
+	pid->dKp = dKp;
+	pid->aKp = aKp;
+	pid->dKi = dKi * ssec;
+	pid->aKi = aKi * ssec;
+	pid->aKd = aKd / ssec;
+	pid->dKd = dKd / ssec;
 
 	if (pid->direction == E_PID_REVERSE) {
-		pid->Kp = 0 - pid->Kp;
-		pid->Ki = 0 - pid->Ki;
-		pid->Kd = 0 - pid->Kd;
+		pid->aKp = 0 - pid->aKp;
+		pid->aKi = 0 - pid->aKi;
+		pid->aKd = 0 - pid->aKd;
+		pid->dKp = 0 - pid->dKp;
+		pid->dKi = 0 - pid->dKi;
+		pid->dKd = 0 - pid->dKd;
 	}
 }
 
 void pid_change_sampling(pid_ct pid, uint32_t time) {
 	if (time > 0) {
 		float ratio = (float) (time * (CLOCKS_PER_SEC / 1000)) / (float) pid->sampletime;
-		pid->Ki *= ratio;
-		pid->Kd /= ratio;
+		pid->aKi *= ratio;
+		pid->dKi *= ratio;
+		pid->aKd /= ratio;
+		pid->dKd /= ratio;
 		pid->sampletime = time * (CLOCKS_PER_SEC / 1000);
 	}
 }
@@ -139,33 +159,21 @@ void pid_change_limits(pid_ct pid, float min, float max) {
 	if (min >= max) return;
 	pid->out_min = min;
 	pid->out_max = max;
-	//Adjust output to new limits
-	if (pid->automode) {
-		if (*(pid->output) > pid->out_max){
-			*(pid->output) = pid->out_max;
-		}
-		else if (*(pid->output) < pid->out_min) {
-			*(pid->output) = pid->out_min;
-		}
 
-		if (pid->iterm > pid->out_max){
-			pid->iterm = pid->out_max;
-		}
-		else if (pid->iterm < pid->out_min){
-			pid->iterm = pid->out_min;
-		}
-	}
+	// Re-applying new limits on steering & tuning params
+	*(pid->throttle_out) = check_bounds(pid, *(pid->throttle_out));
+	*(pid->steer_out) = check_bounds(pid, *(pid->steer_out));
+	pid->a_int = check_bounds(pid, pid->a_int);
+	pid->d_int = check_bounds(pid,pid->d_int);
+
 }
 
 void pid_auto(pid_ct pid) {
 	// If going from manual to auto
 	if (!pid->automode) {
-		pid->iterm = *(pid->output);
+		pid->a_int = check_bounds(pid, *(pid->steer_out));
+		pid->d_int = check_bounds(pid,*(pid->throttle_out));
 		pid->lastin = pid->input;
-		if (pid->iterm > pid->out_max)
-			pid->iterm = pid->out_max;
-		else if (pid->iterm < pid->out_min)
-			pid->iterm = pid->out_min;
 		pid->automode = true;
 	}
 }
@@ -176,9 +184,12 @@ void pid_manual(pid_ct pid) {
 
 void pid_direction(pid_ct pid, enum pid_control_directions dir) {
 	if (pid->automode && pid->direction != dir) {
-		pid->Kp = (0 - pid->Kp);
-		pid->Ki = (0 - pid->Ki);
-		pid->Kd = (0 - pid->Kd);
+		pid->aKp = 0 - pid->aKp;
+		pid->aKi = 0 - pid->aKi;
+		pid->aKd = 0 - pid->aKd;
+		pid->dKp = 0 - pid->dKp;
+		pid->dKi = 0 - pid->dKi;
+		pid->dKd = 0 - pid->dKd;
 	}
 	pid->direction = dir;
 }
