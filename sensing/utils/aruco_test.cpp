@@ -56,7 +56,7 @@ VideoCapture TheVideoCapturer;
 vector<Marker> TheMarkers;
 Mat TheInputImage,TheInputImageGrey, TheInputImageCopy;
 CameraParameters TheCameraParameters;
-void cvTackBarEvents(int pos, void*);
+//void cvTackBarEvents(int pos, void*);
 string dictionaryString;
 int iDetectMode=0,iMinMarkerSize=0,iCorrectionRate=0,iShowAllCandidates=0;
 
@@ -86,12 +86,12 @@ void setParamsFromGlobalVariables(aruco::MarkerDetector &md){
     md.setDictionary(dictionaryString,float(iCorrectionRate)/10. );  // sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
 }
 
-void createMenu(){
-   cv::createTrackbar("DetectMode", "in", &iDetectMode, 2, cvTackBarEvents);
-   cv::createTrackbar("MinMarkerSize", "in", &iMinMarkerSize, 1000, cvTackBarEvents);
-   cv::createTrackbar("ErrorRate", "in", &iCorrectionRate, 10, cvTackBarEvents);
-   cv::createTrackbar("ShowAll", "in", &iShowAllCandidates, 1, cvTackBarEvents);
- }
+//void createMenu(){
+   //cv::createTrackbar("DetectMode", "in", &iDetectMode, 2, cvTackBarEvents);
+   //cv::createTrackbar("MinMarkerSize", "in", &iMinMarkerSize, 1000, cvTackBarEvents);
+   //cv::createTrackbar("ErrorRate", "in", &iCorrectionRate, 10, cvTackBarEvents);
+   //cv::createTrackbar("ShowAll", "in", &iShowAllCandidates, 1, cvTackBarEvents);
+// }
 
 void putText(cv::Mat &im,string text,cv::Point p,float size){
     float fact=float(im.cols)/float(640);
@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
-            int vIdx = 0;
+            int vIdx = 2;
             // check if the :idx is here
             char cad[100];
             if (TheInputVideo.find(":") != string::npos) {
@@ -285,7 +285,8 @@ int main(int argc, char** argv) {
                 positionPtr->location.x = marker_location.x + Tvec.at<float>(0,0);
                 positionPtr->location.y = marker_location.y - Tvec.at<float>(2,0);
                 positionPtr->location.angle = z_angle;
-
+				cout << "XTvec = " << Tvec.at<float>(0,0) << endl;
+				cout << "YTvec = " << Tvec.at<float>(0,0) << endl;
 				cout << "X Pos = " << positionPtr->location.x << endl;
 				cout << "Y Pos = " << positionPtr->location.y << endl;
 				cout << "Angle = " << positionPtr->location.angle << endl;
@@ -308,44 +309,44 @@ int main(int argc, char** argv) {
             //cv::imshow("in", TheInputImageCopy);
 		
             key = cv::waitKey(waitTime);  // wait for key to be pressed
-            if (key == 's')
-                waitTime = waitTime == 0 ? 10 : 0;
-            if (key == 'w'){
+            //if (key == 's')
+                //waitTime = waitTime == 0 ? 10 : 0;
+            //if (key == 'w'){
 	            //writes current input image
-                string number=std::to_string(indexSave++);
-                while(number.size()!=3)number="0"+number;
-                string imname="arucoimage"+number+".png";
+                //string number=std::to_string(indexSave++);
+                //while(number.size()!=3)number="0"+number;
+                //string imname="arucoimage"+number+".png";
 				//cv::imwrite(imname,TheInputImage);
-                cv::imwrite(imname,TheInputImageCopy);
-                cout<<"saved "<<imname<<endl;
-                imname="orgimage"+number+".png";
-                cv::imwrite(imname,TheInputImage);
-                cout<<"saved "<<imname<<endl;
+                //cv::imwrite(imname,TheInputImageCopy);
+                //cout<<"saved "<<imname<<endl;
+                //imname="orgimage"+number+".png";
+                //cv::imwrite(imname,TheInputImage);
+               // cout<<"saved "<<imname<<endl;
 
-            }
-             if (key=='m') {
-                showMennu=!showMennu;
-                if (showMennu) createMenu();
-                else{
-                    cv::destroyWindow("in");
-                    cv::namedWindow("in",cv::WINDOW_NORMAL);
-                    cv::resizeWindow("in",640,480);
-                }
-            }
-            if (key=='h')
-	            bPrintHelp=!bPrintHelp;
+            //}
+             //if (key=='m') {
+               // showMennu=!showMennu;
+                //if (showMennu) createMenu();
+                //else{
+                  //  cv::destroyWindow("in");
+                   // cv::namedWindow("in",cv::WINDOW_NORMAL);
+                    //cv::resizeWindow("in",640,480);
+                //}
+            //}
+            //if (key=='h')
+	            //bPrintHelp=!bPrintHelp;
 
-            if (key=='t'){
+            //if (key=='t'){
 	            //run a deeper speed test
-                for(int t=0;t<30;t++){
+                //for(int t=0;t<30;t++){
                     // Detection of markers in the image passed
-                    Fps.start();
-                    TheMarkers = MDetector.detect(TheInputImage, TheCameraParameters, TheMarkerSize);
-                    Fps.stop();
+                   // Fps.start();
+                    //TheMarkers = MDetector.detect(TheInputImage, TheCameraParameters, TheMarkerSize);
+                    //Fps.stop();
                     // chekc the speed by calculating the mean speed of all iterations
-                }
-                printInfo(TheInputImageCopy);
-            }
+                //}
+                //printInfo(TheInputImageCopy);
+           // }
             index++;  // number of images captured
 
             if (isVideo)
@@ -388,7 +389,7 @@ void cvTackBarEvents(int pos, void*) {
         for (unsigned int i = 0; i < TheMarkers.size(); i++)
             CvDrawingUtils::draw3dCube(TheInputImageCopy, TheMarkers[i], TheCameraParameters);
 
-    //cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
-    //cv::imshow("in",  TheInputImageCopy );
-    //cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
+    cv::putText(TheInputImageCopy,"fps="+to_string(1./Fps.getAvrg() ),cv::Point(10,20),FONT_HERSHEY_SIMPLEX, 0.5f,cv::Scalar(125,255,255),2,CV_AA);
+    cv::imshow("in",  TheInputImageCopy );
+    cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
 }

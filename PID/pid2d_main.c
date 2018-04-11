@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include <semaphore.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 // Project file level includes
 #include "../include/pid_source.h"
@@ -28,7 +32,7 @@ double throttle_output = 0, steer_output = 0;
 bool run, throttle_active, steer_active;
 
 // Initial p, i, d values will be refined by actual live testing.. will tune these params from live testing
-float dKp = 0.2, dKi = 0, dKd = 0, aKp = 0.5, aKi = 0, aKd = 0;
+float dKp = 0.2, dKi = 0, dKd = 0.1, aKp = 0.5, aKi = 0, aKd = 0;
 
 // Shared Memory Variables
 sem_t *servo_sem;
@@ -44,8 +48,27 @@ int main() {
 	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
 	sem_t *servo_sem = sem_open(SERVOSEM, 1);
 	sem_t *pos_sem = sem_open(POSITSEM, 1);
-	if (servo_sem == SEM_FAILED | pos_sem == SEM_FAILED) {
+	/* if (servo_sem == SEM_FAILED |pos_sem == SEM_FAILED) {
 		perror("Semaphore open error. \n");
+		exit(1); 
+	}*/
+
+	if (servo_sem == SEM_FAILED){
+		sem_unlink(SERVOSEM);
+		servo_sem = sem_open(SERVOSEM,1); 
+		if (servo_sem == SEM_FAILED){
+			perror("semaphore open error\n");
+			exit(1);
+		}
+	}
+
+	if (pos_sem == SEM_FAILED){
+		sem_unlink(POSITSEM);
+		pos_sem = sem_open(POSITSEM,1); 
+		if (pos_sem == SEM_FAILED){
+			perror("semaphore open error\n");
+			exit(1);
+		}
 	}
 
 	servo_fid = shm_open("racecar", O_CREAT | O_RDWR, 0666);

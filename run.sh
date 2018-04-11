@@ -4,5 +4,5 @@ cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build/utils
 cd /home/nvidia/BU-Autonomous-RaceCar/actuation
 ./command &>/dev/null &
 cd /home/nvidia/BU-Autonomous-RaceCar/PID
-./pid2d_test 
+./pid2d_main
 

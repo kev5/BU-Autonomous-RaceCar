@@ -70,32 +70,32 @@ void pid_compute(pid_ct pid) {
 	struct coordinate *last = pid->lastin;
 
     /* Normalizing angles to polar system */
-    struct coordinate *set2 = set;
-    set2->x = set->x - current->x;
-    set2->y = set->y - current->y;
+    struct coordinate set2 = *set;
+    set2.x = set->x - current->x;
+    set2.y = set->y - current->y;
 
-    set2->angle = atan(set2->y/set2->x);
-    if(!sign(set2->x)){
-        set2->angle += PI/2;
-    } else if(sign(set2->x) & !sign(set2->y)){
-        set2->angle += 2*PI;
+    set2.angle = atan(set2.y/set2.x);
+    if(!sign(set2.x)){
+        set2.angle += PI/2;
+    } else if(sign(set2.x) & !sign(set2.y)){
+        set2.angle += 2*PI;
     }
     if(!sign(current->angle)){
         current->angle = (PI/2) + fabs(current->angle);
     } else if(sign(current->angle) && current->angle <= PI/2){
         current->angle = (PI/2) - current->angle;
     } else{
-        current->angle = (2*PI) - current->angle;
+        current->angle = (5*PI/2) - current->angle;
     }
 
     /* Getting angular error */
-	ang_err = set2->angle - current->angle;
-    if(fabs(ang_err) > 2*PI){
-        ang_err = (ang_err > 0) ? (2*PI - ang_err) : (ang_err - 2*PI);
+	ang_err = current->angle - set2.angle;
+    if(fabs(ang_err) > PI){
+        ang_err = (ang_err > 0) ? -(2*PI - ang_err) : (2*PI - fabs(ang_err));
     }
 
     // Getting distance error, if its behind us: abs(ang_err) > PI/2
-    dst_error = eucledian_dist(current,last);
+    dst_error = eucledian_dist(current,set);
 
 	// Store current error in structure
 	pid->ang_err = ang_err;
