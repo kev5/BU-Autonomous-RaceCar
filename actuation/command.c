@@ -16,8 +16,8 @@
 #define SPAN 5800
 #define START -1
 #define END 1
-#define THROTTLE_LEFT (1458*4)
-#define THROTTLE_RIGHT (1570*4)
+#define THROTTLE_LEFT (1150*4)
+#define THROTTLE_RIGHT (1812*4)
 #define SPAN_2 (THROTTLE_RIGHT - THROTTLE_LEFT)
 #ifdef _WIN32
 #define 0_NOCTTY 0
@@ -70,8 +70,6 @@ int setTarget(int fd, unsigned short target, unsigned char channel){
         perror("error");
         return -1;
     }
-
-    printf("Written: %d bytes\n", len);
 
     return 0;
 
@@ -177,6 +175,13 @@ void servo(struct throttle_steer *ptr){
 	}
     }
 
+    // ARMING SEQUENCE
+    float neutral = THROTTLE_LEFT + ((0.0 - START) / (END - START))*SPAN_2;
+    setTarget(fd, neutral, 5);
+    printf("Neutral: %f\n", neutral/4);
+    sleep(5);
+
+    
     while(1){
 
         sem_wait(sem);
@@ -184,9 +189,7 @@ void servo(struct throttle_steer *ptr){
         throttleval = ptr->throttle;
         sem_post(sem);
 
-        printf("%f",steerval); // prints steering input stored in shared memory object                                                                                        
         float position = getPosition(fd, 4); // Currently in channel 4
-        printf("Current Position: %f\n", position);
 
         if(steerval > 1){ //makes sure input stays within boundaries
             steerval = 1;
@@ -197,14 +200,13 @@ void servo(struct throttle_steer *ptr){
 
         float target = SERVO_LEFT + ((steerval - START) / (END - START))*SPAN; //converts input in range [-1 1] to PWM values
         if(position != target){
-            printf("\nsteer target is %f\n",target);
-            setTarget(fd, target, 4);
+		printf("Steer target: %f\n",target/4);
+		setTarget(fd, target, 4);
         }
-
+	
         /////////////////// throttle ////////////////////////////
 
         float position2 = getPosition(fd, 5);
-        printf("%f",throttleval);
 
         //makes sure input stays within boundaries
         if(throttleval > 1){
@@ -216,8 +218,8 @@ void servo(struct throttle_steer *ptr){
 
         float target2 = THROTTLE_LEFT + ((throttleval - START) / (END - START))*SPAN_2;
         if(position2 != target2){
-            printf( "\nthrottle target is %f\n", target2);
-            setTarget(fd, target2, 5);
+		printf( "Throttle target: %f\n", target2/4);
+		setTarget(fd, target2, 5);
         }
     }
 }

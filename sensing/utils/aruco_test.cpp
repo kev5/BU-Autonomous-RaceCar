@@ -56,7 +56,7 @@ VideoCapture TheVideoCapturer;
 vector<Marker> TheMarkers;
 Mat TheInputImage,TheInputImageGrey, TheInputImageCopy;
 CameraParameters TheCameraParameters;
-//void cvTackBarEvents(int pos, void*);
+void cvTackBarEvents(int pos, void*);
 string dictionaryString;
 int iDetectMode=0,iMinMarkerSize=0,iCorrectionRate=0,iShowAllCandidates=0;
 
@@ -86,12 +86,12 @@ void setParamsFromGlobalVariables(aruco::MarkerDetector &md){
     md.setDictionary(dictionaryString,float(iCorrectionRate)/10. );  // sets the dictionary to be employed (ARUCO,APRILTAGS,ARTOOLKIT,etc)
 }
 
-//void createMenu(){
-   //cv::createTrackbar("DetectMode", "in", &iDetectMode, 2, cvTackBarEvents);
-   //cv::createTrackbar("MinMarkerSize", "in", &iMinMarkerSize, 1000, cvTackBarEvents);
-   //cv::createTrackbar("ErrorRate", "in", &iCorrectionRate, 10, cvTackBarEvents);
-   //cv::createTrackbar("ShowAll", "in", &iShowAllCandidates, 1, cvTackBarEvents);
-// }
+void createMenu(){
+   cv::createTrackbar("DetectMode", "in", &iDetectMode, 2, cvTackBarEvents);
+   cv::createTrackbar("MinMarkerSize", "in", &iMinMarkerSize, 1000, cvTackBarEvents);
+   cv::createTrackbar("ErrorRate", "in", &iCorrectionRate, 10, cvTackBarEvents);
+   cv::createTrackbar("ShowAll", "in", &iShowAllCandidates, 1, cvTackBarEvents);
+ }
 
 void putText(cv::Mat &im,string text,cv::Point p,float size){
     float fact=float(im.cols)/float(640);
@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
-            int vIdx = 2;
+            int vIdx = 0;
             // check if the :idx is here
             char cad[100];
             if (TheInputVideo.find(":") != string::npos) {
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
 		int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
 		if (fid == -1){
 			perror("shm_open error \n");
-			return -1;
+			exit(1); 
 		}
 		ftruncate(fid,4096);
 
@@ -216,7 +216,7 @@ int main(int argc, char** argv) {
 		sem = sem_open("/position_sem",1);
 
         // Hardcoding setpoint:
-        positionPtr->setpoint.x = 4.3;
+        positionPtr->setpoint.x = 3.0;
         positionPtr->setpoint.y = 1.9;
         positionPtr->setpoint.angle = 0;
 
@@ -285,8 +285,7 @@ int main(int argc, char** argv) {
                 positionPtr->location.x = marker_location.x + Tvec.at<float>(0,0);
                 positionPtr->location.y = marker_location.y - Tvec.at<float>(2,0);
                 positionPtr->location.angle = z_angle;
-				cout << "XTvec = " << Tvec.at<float>(0,0) << endl;
-				cout << "YTvec = " << Tvec.at<float>(0,0) << endl;
+				cout << "Marker ID = " << TheMarkers[i].id << endl; 
 				cout << "X Pos = " << positionPtr->location.x << endl;
 				cout << "Y Pos = " << positionPtr->location.y << endl;
 				cout << "Angle = " << positionPtr->location.angle << endl;
@@ -308,7 +307,7 @@ int main(int argc, char** argv) {
             //cv::imshow("thres", resize(MDetector.getThresholdedImage(), 1024));
             //cv::imshow("in", TheInputImageCopy);
 		
-            key = cv::waitKey(waitTime);  // wait for key to be pressed
+            //key = cv::waitKey(waitTime);  // wait for key to be pressed
             //if (key == 's')
                 //waitTime = waitTime == 0 ? 10 : 0;
             //if (key == 'w'){
@@ -353,7 +352,7 @@ int main(int argc, char** argv) {
                 if ( TheVideoCapturer.grab()==false)
 	                key=27;
 
-        } while (key != 27 );
+        } while (true);
     }
     catch (std::exception& ex) {
         cout << "Exception :" << ex.what() << endl;
