@@ -5,20 +5,20 @@
 #ifndef BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
 #define BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
 
-#include "pid_source.h"
+#include "Coordinate.h"
 
 struct pid_params{
 
-	struct coordinate location;
-	struct coordinate setpoint;
+	Coordinate location;
+	Coordinate setpoint;
 
 	/* Coordinate has fields:
 	 * float x
 	 * float y
 	 * float angle
+	 * int id
 	 */
 
-	// TODO: Setting true will enable PID
 	bool active;
 };
 #endif //BU_AUTONOMOUS_RACECAR_PID_PARAMS_H
