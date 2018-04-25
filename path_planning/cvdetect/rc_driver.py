@@ -1,15 +1,7 @@
-__author__ = 'zhengwang'
-
 import threading
-import SocketServer
-import serial
 import cv2
 import numpy as np
 import math
-
-# distance data measured by ultrasonic sensor
-sensor_data = " "
-
 
 class NeuralNetwork(object):
 
@@ -28,29 +20,25 @@ class NeuralNetwork(object):
 
 class RCControl(object):
 
-    def __init__(self):
-        self.serial_port = serial.Serial('/dev/tty.usbmodem1421', 115200, timeout=1)
-
-    def steer(self, prediction):
+def steer(self, prediction):
         if prediction == 2:
-            self.serial_port.write(chr(1))
             print("Forward")
         elif prediction == 0:
-            self.serial_port.write(chr(7))
             print("Left")
         elif prediction == 1:
-            self.serial_port.write(chr(6))
             print("Right")
         else:
             self.stop()
 
     def stop(self):
-        self.serial_port.write(chr(0))
+        print("Stop")
 
 
 class DistanceToCamera(object):
 
     def __init__(self):
+
+        #!!!!!!!!!! Calibrate Camera with picam !!!!!!!!!!!!!!!!!1
         # camera params
         self.alpha = 8.0 * math.pi / 180
         self.v0 = 119.865631204
@@ -125,29 +113,10 @@ class ObjectDetection(object):
                     #    self.yellow_light = True
         return v
 
-
-class SensorDataHandler(SocketServer.BaseRequestHandler):
-
-    data = " "
-
-    def handle(self):
-        global sensor_data
-        try:
-            while self.data:
-                self.data = self.request.recv(1024)
-                sensor_data = round(float(self.data), 1)
-                #print "{} sent:".format(self.client_address[0])
-                print sensor_data
-        finally:
-            print "Connection closed on thread 2"
-
-
 class VideoStreamHandler(SocketServer.StreamRequestHandler):
 
-    # h1: stop sign
-    h1 = 15.5 - 10  # cm
-    # h2: traffic light
-    h2 = 15.5 - 10
+    # Height of Obstacle
+    binh = 100 #??
 
     # create neural network
     model = NeuralNetwork()
@@ -157,12 +126,10 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
     rc_car = RCControl()
 
     # cascade classifiers
-    stop_cascade = cv2.CascadeClassifier('cascade_xml/stop_sign.xml')
-    light_cascade = cv2.CascadeClassifier('cascade_xml/traffic_light.xml')
+    bin_cascade = cv2.CascadeClassifier('cascade_xml/stop_sign.xml')
 
     d_to_camera = DistanceToCamera()
-    d_stop_sign = 25
-    d_light = 25
+    d_bin = 25
 
     stop_start = 0              # start time when stop at the stop sign
     stop_finish = 0
@@ -172,16 +139,14 @@ class VideoStreamHandler(SocketServer.StreamRequestHandler):
     def handle(self):
 
         global sensor_data
-        stream_bytes = ' '
         stop_flag = False
-        stop_sign_active = True
+        bin_detected = False
 
         # stream video frames one by one
         try:
             while True:
-                stream_bytes += self.rfile.read(1024)
-                first = stream_bytes.find('\xff\xd8')
-                last = stream_bytes.find('\xff\xd9')
+
+                # ... 
                 if first != -1 and last != -1:
                     jpg = stream_bytes[first:last+2]
                     stream_bytes = stream_bytes[last+2:]
