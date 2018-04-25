@@ -1,5 +1,3 @@
-__author__ = 'zhengwang'
-
 import cv2
 import numpy as np
 import glob
@@ -10,8 +8,8 @@ print 'Loading training data...'
 e0 = cv2.getTickCount()
 
 # load training data
-image_array = np.zeros((1, 38400))
-label_array = np.zeros((1, 4), 'float')
+image_array = np.zeros((1, 76800))
+label_array = np.zeros((1, 5), 'float')
 training_data = glob.glob('training_data/*.npz')
 
 # if no data, exit
@@ -42,7 +40,7 @@ train, test, train_labels, test_labels = train_test_split(X, y, test_size=0.3)
 e1 = cv2.getTickCount()
 
 # create MLP
-layer_sizes = np.int32([38400, 32, 4])
+layer_sizes = np.int32([76800, 64, 5])
 model = cv2.ANN_MLP()
 model.create(layer_sizes)
 criteria = (cv2.TERM_CRITERIA_COUNT | cv2.TERM_CRITERIA_EPS, 500, 0.0001)

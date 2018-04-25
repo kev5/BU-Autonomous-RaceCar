@@ -1,11 +1,5 @@
-__author__ = 'zhengwang'
-
 import numpy as np
 import cv2
-import serial
-import pygame
-from pygame.locals import *
-import socket
 import time
 import os
 
@@ -13,28 +7,18 @@ import os
 class CollectTrainingData(object):
     
     def __init__(self):
-
-        self.server_socket = socket.socket()
-        self.server_socket.bind(('192.168.1.100', 8000))
-        self.server_socket.listen(0)
-
-        # accept a single connection
-        self.connection = self.server_socket.accept()[0].makefile('rb')
-
-        # connect to a seral port
-        self.ser = serial.Serial('/dev/tty.usbmodem1421', 115200, timeout=1)
-        self.send_inst = True
-
         # create labels
-        self.k = np.zeros((4, 4), 'float')
-        for i in range(4):
-            self.k[i, i] = 1
-        self.temp_label = np.zeros((1, 4), 'float')
+        self.k = np.zeros((5, 5), 'float')
 
-        pygame.init()
+        # labels: [left, right, sharp left, sharp right, straight]
+        for i in range(5):
+            self.k[i,i] = 1
+        self.temp_label = np.zeros((1, 5), 'float')
         self.collect_image()
 
     def collect_image(self):
+        # source = 720 x 1280 x 3
+        videos = ['source_videos/bin_1.wmv', 'source_videos/hallway_1.wmv', 'source_videos/bin_2.wmv', 'source_videos/bin_3.wmv', 'source_videos/hallwayUp_1.wmv'] # ... add more
 
         saved_frame = 0
         total_frame = 0
@@ -42,102 +26,79 @@ class CollectTrainingData(object):
         # collect images for training
         print 'Start collecting images...'
         e1 = cv2.getTickCount()
-        image_array = np.zeros((1, 38400))
-        label_array = np.zeros((1, 4), 'float')
+
+        # 320x240 resolution
+        image_array = np.zeros((1, 76800))
+        label_array = np.zeros((1, 5), 'float')
+
+        resize_h = (720/3)
+        resize_w = (1280/4)
 
         # stream video frames one by one
         try:
-            stream_bytes = ' '
-            frame = 1
-            while self.send_inst:
-                stream_bytes += self.connection.read(1024)
-                first = stream_bytes.find('\xff\xd8')
-                last = stream_bytes.find('\xff\xd9')
-                if first != -1 and last != -1:
-                    jpg = stream_bytes[first:last + 2]
-                    stream_bytes = stream_bytes[last + 2:]
-                    image = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_GRAYSCALE)
-                    
-                    # select lower half of the image
-                    roi = image[120:240, :]
-                    
-                    # save streamed images
-                    cv2.imwrite('training_images/frame{:>05}.jpg'.format(frame), image)
-                    
-                    #cv2.imshow('roi_image', roi)
-                    cv2.imshow('image', image)
-                    
-                    # reshape the roi image into one row array
-                    temp_array = roi.reshape(1, 38400).astype(np.float32)
-                    
-                    frame += 1
-                    total_frame += 1
+            frame_num = 1
+            cap = cv2.VideoCapture(videos[0])
+            while cap.isOpened():
+                ret, image = cap.read()
 
-                    # get input from human driver
-                    for event in pygame.event.get():
-                        if event.type == KEYDOWN:
-                            key_input = pygame.key.get_pressed()
+                # resize into 320 x 240
+                image = cv2.resize(image, (resize_w, resize_h))
 
-                            # complex orders
-                            if key_input[pygame.K_UP] and key_input[pygame.K_RIGHT]:
-                                print("Forward Right")
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[1]))
-                                saved_frame += 1
-                                self.ser.write(chr(6))
+                # grayscale
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                
+                # save streamed images
+                # cv2.imwrite('training_images/frame{:>05}.jpg'.format(frame_num), image)
+                cv2.imshow('image', image)
+                
+                # reshape into one row
+                temp_array = image.reshape(1, 76800).astype(np.float32)
+                
+                frame_num += 1
+                total_frame += 1
 
-                            elif key_input[pygame.K_UP] and key_input[pygame.K_LEFT]:
-                                print("Forward Left")
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[0]))
-                                saved_frame += 1
-                                self.ser.write(chr(7))
+                # go frame by frame and provide labels
+                k = cv2.waitKey(0) & 0xFF
+            
+                # commands
+                if k == ord('Q'):
+                    print('quit')
+                    break
 
-                            elif key_input[pygame.K_DOWN] and key_input[pygame.K_RIGHT]:
-                                print("Reverse Right")
-                                self.ser.write(chr(8))
-                            
-                            elif key_input[pygame.K_DOWN] and key_input[pygame.K_LEFT]:
-                                print("Reverse Left")
-                                self.ser.write(chr(9))
+                elif k == ord('a'):
+                    print("Left")
+                    image_array = np.vstack((image_array, temp_array))
+                    label_array = np.vstack((label_array, self.k[0]))
+                    saved_frame += 1
 
-                            # simple orders
-                            elif key_input[pygame.K_UP]:
-                                print("Forward")
-                                saved_frame += 1
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[2]))
-                                self.ser.write(chr(1))
+                elif k == ord('d'):
+                    print("Right")
+                    image_array = np.vstack((image_array, temp_array))
+                    label_array = np.vstack((label_array, self.k[1]))
+                    saved_frame += 1
 
-                            elif key_input[pygame.K_DOWN]:
-                                print("Reverse")
-                                saved_frame += 1
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[3]))
-                                self.ser.write(chr(2))
-                            
-                            elif key_input[pygame.K_RIGHT]:
-                                print("Right")
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[1]))
-                                saved_frame += 1
-                                self.ser.write(chr(3))
+                elif k == ord('w'):
+                    print("Straight")
+                    image_array = np.vstack((image_array, temp_array))
+                    label_array = np.vstack((label_array, self.k[4]))
+                    saved_frame += 1
 
-                            elif key_input[pygame.K_LEFT]:
-                                print("Left")
-                                image_array = np.vstack((image_array, temp_array))
-                                label_array = np.vstack((label_array, self.k[0]))
-                                saved_frame += 1
-                                self.ser.write(chr(4))
+                # sharps
+                elif k == ord('q'):
+                    print("Sharp Left")
+                    image_array = np.vstack((image_array, temp_array))
+                    label_array = np.vstack((label_array, self.k[2]))
+                    saved_frame += 1
 
-                            elif key_input[pygame.K_x] or key_input[pygame.K_q]:
-                                print 'exit'
-                                self.send_inst = False
-                                self.ser.write(chr(0))
-                                break
-                                    
-                        elif event.type == pygame.KEYUP:
-                            self.ser.write(chr(0))
+                elif k == ord('e'):
+                    print("Sharp Right")
+                    image_array = np.vstack((image_array, temp_array))
+                    label_array = np.vstack((label_array, self.k[3]))
+                    saved_frame += 1
+
+                elif k == ord('s'):
+                    print('Skip')
+    
 
             # save training images and labels
             train = image_array[1:, :]
@@ -165,8 +126,8 @@ class CollectTrainingData(object):
             print 'Dropped frame', total_frame - saved_frame
 
         finally:
-            self.connection.close()
-            self.server_socket.close()
+            cap.release()
+            cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     CollectTrainingData()
