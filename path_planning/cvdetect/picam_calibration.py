@@ -48,11 +48,13 @@ retval, cameraMatrix, distCoeffs, rvecs, tvecs = cv2.calibrateCamera(object_poin
 
 print "camera matrix:\n", cameraMatrix
 
+
+# for x-axis
 # pi camera intrinsic parameters
-ay = cameraMatrix[1, 1]
+ax = cameraMatrix[0, 1]
 u0 = cameraMatrix[0, 2]
 v0 = cameraMatrix[1, 2]
-print "Ay:", ay
+print "Ay:", ax
 print "u0:", u0
 print "v0:", v0
 

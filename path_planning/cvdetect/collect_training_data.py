@@ -18,7 +18,7 @@ class CollectTrainingData(object):
 
     def collect_image(self):
         # source = 720 x 1280 x 3
-        videos = ['source_videos/bin_1.wmv', 'source_videos/hallway_1.wmv', 'source_videos/bin_2.wmv', 'source_videos/bin_3.wmv', 'source_videos/hallwayUp_1.wmv'] # ... add more
+        videos = ['source/videos/bin_4.wmv'] # ... add more
 
         saved_frame = 0
         total_frame = 0
@@ -31,7 +31,7 @@ class CollectTrainingData(object):
         image_array = np.zeros((1, 76800))
         label_array = np.zeros((1, 5), 'float')
 
-        resize_h = (720/3)
+        resize_h = (720/6)
         resize_w = (1280/4)
 
         # stream video frames one by one
@@ -95,6 +95,10 @@ class CollectTrainingData(object):
                     image_array = np.vstack((image_array, temp_array))
                     label_array = np.vstack((label_array, self.k[3]))
                     saved_frame += 1
+
+                elif k == ord('n'):
+                    print('Saved')
+                    cv2.imwrite('./source/bg/frame{:>05}.jpg'.format(frame_num), image)
 
                 elif k == ord('s'):
                     print('Skip')
