@@ -47,11 +47,11 @@ class ObjectDetection(object):
             v = x_pos + width
 
             center_x = x_pos+width/2
-            angle = (center_x - 160)/320
+            angle = ((center_x - 160) / float(320) * 100)
 
             cv2.putText(image, 'Obstacle', (x_pos, y_pos-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             
-            print('Obstacle detected at ({},{}) at angle of {}\% of width {}px.'.format(x_pos, y_pos, angle, width))
+            print('Obstacle detected at ({},{}) at angle of {}% of width {}px.'.format(x_pos, y_pos, angle, width))
             
         return v
 
