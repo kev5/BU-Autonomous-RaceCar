@@ -1,4 +1,3 @@
-import threading
 import cv2
 import numpy as np
 import math
@@ -10,8 +9,8 @@ class DistanceToCamera(object):
 
         # camera params
         self.alpha = 8.0 * math.pi / 180 # camera angle
-        self.u0 = 200
-        self.ay = 500
+        self.u0 = 138
+        self.ay = 240
 
     def calculate(self, v, h, x_shift, image):
         # compute and return the distance from the target point to the camera
