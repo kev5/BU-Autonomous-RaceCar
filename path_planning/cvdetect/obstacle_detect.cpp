@@ -3,6 +3,8 @@
 #include "opencv2/opencv.hpp"
 
 #include <stdio.h>
+#include <math.h>
+
 
 using namespace std;
 using namespace cv;
@@ -45,9 +47,23 @@ int main( int argc, const char** argv )
         //-- 3. Apply the classifier to the frame
         detectAndDisplay( frame );
 
-        if( waitKey(10) == 27 ) { break; } // escape
+        if( waitKey(25) == 27 ) { break; } // escape
     }
     return 0;
+}
+
+int calculateDist (int v, Mat image) {
+    double pi = 3.1415926535897;
+    double alpha = 8.0 * alpha/180;
+    int u0 = 200;
+    int ay = 500;
+
+    double wid = 18
+    double d;
+
+    d = wid/tan(alpha + atan((v-u0)/ay));
+    
+    return d;
 }
 
 /** @function detectAndDisplay */
@@ -56,6 +72,7 @@ void detectAndDisplay( Mat frame )
     std::vector<Rect> obst;
     Mat frame_gray;
     Mat res_gray;
+
     int angle;
 
     cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
@@ -69,9 +86,16 @@ void detectAndDisplay( Mat frame )
     {
         rectangle(frame, obst[i].x, obst[i].y, obst[i].x+obst[i].width, obst[i].y+obst[i].height, Scalar(255,0,255),2  )
         Point center( obst[i].x + obst[i].width/2, obst[i].y + obst[i].height/2 );
-        angle = (center.x - 160)/320
-        printf("Detected object at (%d, %d) at an angle of %d and width %d px.", center.x, center.y, angle, obst[i].width );
         
+        angle = (center.x - 160)/320
+
+        d = calculateDist(obst[i].x + obst[i].width, res_gray)
+
+        if d > 0:
+            putText(image, "%.1fin" % d, Point (frame.size().width - 300, frame.size().height[0] - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+
+        printf("Detected object at (%d, %d). It is %d in away at angle of %d and width %d px.", center.x, center.y, dist, angle, obst[i].width );
+
     }
     //-- Show what you got
     imshow( window_name, frame );

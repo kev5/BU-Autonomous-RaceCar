@@ -8,7 +8,7 @@ class DistanceToCamera(object):
     def __init__(self):
 
         # camera params
-        self.alpha = 8.0 * math.pi / 180 # camera angle
+        self.alpha = 15.0 * math.pi / 180 # camera angle
         self.u0 = 138
         self.ay = 240
 
@@ -46,9 +46,12 @@ class ObjectDetection(object):
             # v = y_pos + height - 5
             v = x_pos + width
 
+            center_x = x_pos+width/2
+            angle = (center_x - 160)/320
+
             cv2.putText(image, 'Obstacle', (x_pos, y_pos-5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             
-            print('Obstacle detected at ({},{}) of width {}px.'.format(x_pos, y_pos, width))
+            print('Obstacle detected at ({},{}) at angle of {}\% of width {}px.'.format(x_pos, y_pos, angle, width))
             
         return v
 
