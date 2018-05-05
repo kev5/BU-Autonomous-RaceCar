@@ -274,11 +274,11 @@ int main(int argc, char** argv) {
 				}
 
                 // Calculating current location based off of marker(s) seen
-                struct coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
-                positionPtr->location.setX(marker_location.x + Tvec.at<float>(0,0)); 
-		// positionPtr->location.x = Tvec.at<float>(0,0);
-                positionPtr->location.setY(marker_location.y + Tvec.at<float>(2,0)); 
-		// positionPtr->location.y = Tvec.at<float>(2,0);
+                Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
+                positionPtr->location.setX(marker_location.getX() + Tvec.at<float>(0,0)); 
+                // positionPtr->location.x = Tvec.at<float>(0,0);
+                positionPtr->location.setY(marker_location.getY() + Tvec.at<float>(2,0)); 
+		        // positionPtr->location.y = Tvec.at<float>(2,0);
                 positionPtr->location.setAngle(z_angle);
 				cout << "Marker ID = " << TheMarkers[i].id << endl; 
 				cout << "X Pos = " << positionPtr->location.getX() << endl;
