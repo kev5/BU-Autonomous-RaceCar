@@ -128,6 +128,37 @@ void printInfo(cv::Mat &im){
  ************************************/
 int main(int argc, char** argv) {
     try {
+        // create new semaphore
+        #define SNAME "/position_sem"
+        sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+        if (!sem) {
+            sem_unlink(SNAME);
+            sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+            if(!sem) {
+                fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
+                exit(1);
+            }
+        }
+    
+        // creates a shared memory block
+
+        int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
+        if (fid == -1){
+            perror("shm_open error \n");
+            exit(1); 
+        }
+        ftruncate(fid,4096);
+
+        // Mapping Successful
+        void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
+            if (ptr == MAP_FAILED){
+            perror("error with mapping");
+            return -1;
+        }
+        sem_init(sem,1,1);
+
+        struct pid_params* positionPtr = (struct pid_params*) ptr;
+        sem = sem_open("/position_sem",1);
 
         CmdLineParser cml(argc, argv);
         ///////////  PARSE ARGUMENTS
@@ -181,44 +212,6 @@ int main(int argc, char** argv) {
         // go!
 	    char key = 0;
         int index = 0,indexSave=0;
-
-
-		// create new semaphore
-		#define SNAME "/position_sem"
-		sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
-		if (!sem) {
-			sem_unlink(SNAME);
-			sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
-			if(!sem) {
-				fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
-				exit(1);
-			}
-		}
-	
-		// creates a shared memory block
-
-		int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
-		if (fid == -1){
-			perror("shm_open error \n");
-			exit(1); 
-		}
-		ftruncate(fid,4096);
-
-		// Mapping Successful
-		void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
-	        if (ptr == MAP_FAILED){
-	        perror("error with mapping");
-	        return -1;
-		}
-		sem_init(sem,1,1);
-
-		struct pid_params* positionPtr = (struct pid_params*) ptr;
-		sem = sem_open("/position_sem",1);
-
-        // Hardcoding setpoint:
-        positionPtr->setpoint.x = 3.0;
-        positionPtr->setpoint.y = 1.9;
-        positionPtr->setpoint.angle = 0;
 
 	    // capture until press ESC or until the end of the video
         CoordinateMap* arucos = new CoordinateMap();
@@ -281,16 +274,16 @@ int main(int argc, char** argv) {
 				}
 
                 // Calculating current location based off of marker(s) seen
-                struct coordinate marker_location = arucos->getCoords(TheMarkers[i].id);
-                positionPtr->location.x = marker_location.x + Tvec.at<float>(0,0);
-		// positionPtr->location.x = Tvec.at<float>(0,0);
-                positionPtr->location.y = marker_location.y + Tvec.at<float>(2,0);
-		// positionPtr->location.y = Tvec.at<float>(2,0);
-                positionPtr->location.angle = z_angle;
+                Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
+                positionPtr->location.setX(marker_location.getX() + Tvec.at<float>(0,0)); 
+                // positionPtr->location.x = Tvec.at<float>(0,0);
+                positionPtr->location.setY(marker_location.getY() + Tvec.at<float>(2,0)); 
+		        // positionPtr->location.y = Tvec.at<float>(2,0);
+                positionPtr->location.setAngle(z_angle);
 				cout << "Marker ID = " << TheMarkers[i].id << endl; 
-				cout << "X Pos = " << positionPtr->location.x << endl;
-				cout << "Y Pos = " << positionPtr->location.y << endl;
-				cout << "Angle = " << positionPtr->location.angle << endl;
+				cout << "X Pos = " << positionPtr->location.getX() << endl;
+				cout << "Y Pos = " << positionPtr->location.getY() << endl;
+				cout << "Angle = " << positionPtr->location.getAngle() << endl;
 
 				//write the distance to memory at address 2000
 				sem_post(sem);
