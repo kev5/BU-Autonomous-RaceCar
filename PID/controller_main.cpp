@@ -102,6 +102,8 @@ int main(){
 
 
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);
+	throttle_active = true;
+	steer_active = true;
 
 	while(run){
 		sem_wait(servo_sem);
