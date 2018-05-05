@@ -2,6 +2,7 @@
 // Created by Nicholas Arnold on 4/22/18.
 //
 
+
 #include "Coordinate.h"
 
 double Coordinate::getX() const {
@@ -48,7 +49,7 @@ Coordinate::Coordinate(double x, double y, double angle) {
 	this->x = x;
 	this->y = y;
 	this->angle = angle;
-	this->id = nullptr;
+	this->id = NULL;
 }
 
 Coordinate::Coordinate(double x, double y, double angle, int id) {
@@ -61,6 +62,6 @@ Coordinate::Coordinate(double x, double y, double angle, int id) {
 Coordinate::Coordinate(double x, double y, int id) {
 	this->x = x;
 	this->y = y;
-	this->angle = nullptr;
+	this->angle = NULL;
 	this->id = id;
 }

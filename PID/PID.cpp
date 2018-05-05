@@ -61,7 +61,7 @@ void PID::compute() {
 
 	// Converting car's angle to polar:
 	if(!sign(curr.getAngle())){
-		curr.setAngle(abs(curr.getAngle()) + (PI/2));
+		curr.setAngle(std::abs(curr.getAngle()) + (PI/2));
 	} else if (sign(curr.getAngle()) && (curr.getAngle() <= (PI/2))){
 		curr.setAngle(((PI/2) - curr.getAngle()));
 	}else{
@@ -70,8 +70,8 @@ void PID::compute() {
 
 	// Calculating angular error, correcting for values over 180 degrees (PI radians):
 	ang_err_t = curr.getAngle() - set_prime.getAngle();
-	if(abs(ang_err_t) > PI){
-		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - abs(ang_err_t)));
+	if(std::abs(ang_err_t) > PI){
+		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - std::abs(ang_err_t)));
 	}
 
 	// Calculating distance error, if the setpoint is behind us, abs(ang_err) > PI/2
@@ -82,7 +82,7 @@ void PID::compute() {
 	ang_err = ang_err_t;
 
 	// Computing Difference between this time & last
-	ang_dif = abs(curr.getAngle() - lastin->getAngle());
+	ang_dif = std::abs(curr.getAngle() - lastin->getAngle());
 	dst_dif = euclidean_dist(curr, *lastin);
 
 	// Compute Integral values, enforce that they're within bounds
@@ -125,7 +125,7 @@ void PID::tune(double dKp_in, double dKi_in, double dKd_in, double aKp_in, doubl
 	}
 }
 
-void PID::change_sampling(u_int32_t time) {
+void PID::change_sampling(int time) {
 	if(time > 0){
 		double ratio = ((double)time * (CLOCKS_PER_SEC/1000.0)) / (double)sampletime;
 		aKi *= ratio;

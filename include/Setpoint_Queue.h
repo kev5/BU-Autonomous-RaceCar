@@ -26,7 +26,7 @@ public:
 
 private:
 	std::deque<Coordinate> set_queue;
-	auto begin;
+	std::deque<Coordinate>::iterator begin;
 };
 
 

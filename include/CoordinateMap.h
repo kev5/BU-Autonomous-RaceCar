@@ -14,13 +14,12 @@ class CoordinateMap{
 public:
     CoordinateMap();
 
-    Coordinate getCoords(int marker_id);
+	Coordinate get_coords(int marker_id);
 
-    void add_marker(int value, Coordinate position);
+    void add_marker(Coordinate position);
 
 private:
     std::map<int, Coordinate> aruco_map;
-
 };
 
 #endif //BU_AUTONOMOUS_RACECAR_COORDINATEMAP_H

@@ -5,6 +5,7 @@
 #ifndef PID_COORDINATE_H
 #define PID_COORDINATE_H
 
+#include <cstdlib>
 
 class Coordinate{
 public:

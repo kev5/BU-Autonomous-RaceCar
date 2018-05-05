@@ -55,7 +55,7 @@ public:
 	/**
 	 * @param time - the amount of time between computations
 	 */
-	void change_sampling(u_int32_t time);
+	void change_sampling(int time);
 
 	/**
 	 * @param min - the new mininum value that the PID can output

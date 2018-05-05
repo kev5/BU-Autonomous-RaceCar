@@ -10,8 +10,8 @@ CoordinateMap::CoordinateMap() {
 	Coordinate four = Coordinate(6.0, 1.9, (int)4);
 	Coordinate eight = Coordinate(23.7922,-0.973,(int)8); 
 	Coordinate nine = Coordinate(25.0114,-0.973,(int)9); 
-	Coordinate ten = Coordinate(26.2306,-0.973,(int)10); 
-	Cooridnate eleven = Coordinate(27.4498,-0.973,(int)11); 
+	Coordinate ten = Coordinate(26.2306,-0.973,(int)10);
+	Coordinate eleven = Coordinate(27.4498,-0.973,(int)11);
 	Coordinate twelve = Coordinate(28.885,-0.973,(int)12); 
 	Coordinate thirteen = Coordinate(30.1042,-0.973,(int)13); 
 	Coordinate fourteen = Coordinate(31.3234,-0.973,(int)14); 
@@ -48,7 +48,7 @@ Coordinate CoordinateMap::get_coords(int marker_id) {
 		return it->second; // returns coordinate obj instead of ID
 	}
 	else{
-		return nullptr;
+		return NULL;
 	}
 }
 
