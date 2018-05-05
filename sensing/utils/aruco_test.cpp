@@ -275,6 +275,8 @@ int main(int argc, char** argv) {
 
                 // Calculating current location based off of marker(s) seen
                 Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
+                cout << "Coordinate Map X" << marker_location.getX() << endl; 
+                cout << "Coordinate Map Y" << marker_location.getY() << endl; 
                 positionPtr->location.setX(marker_location.getX() + Tvec.at<float>(0,0)); 
                 // positionPtr->location.x = Tvec.at<float>(0,0);
                 positionPtr->location.setY(marker_location.getY() + Tvec.at<float>(2,0)); 
