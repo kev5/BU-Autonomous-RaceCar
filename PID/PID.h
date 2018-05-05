@@ -9,8 +9,10 @@
 #include "../include/Setpoint_Queue.h"
 #include <ctime>
 #include <cmath>
+#include <iostream>
 
 #define PI 3.14159265
+using namespace std;
 
 class PID {
 public:
@@ -109,10 +111,10 @@ private:
 	/*  Member Variables for computation */
 
 	// Input, output and shared_position
-	Coordinate * current; // Current coordinate of unit
-	Coordinate * setpoint; // Current goal destination point
-	double * steer_out;
-	double * throttle_out; // Corrective Output from PID Controller
+	Coordinate *current; // Current coordinate of unit
+	Coordinate *setpoint; // Current goal destination point
+	double *steer_out;
+	double *throttle_out; // Corrective Output from PID Controller
 
 	// Tuning parameters
 	double aKp, dKp; // Stores the gain for the Proportional term
@@ -129,7 +131,7 @@ private:
 	// Terms for PID algorithm
 	double ang_int, dst_int; // Accumulators for integral term
 	double ang_dif, dst_dif; // Differential between calculations
-	Coordinate *lastin; //  Last input value for differential term
+	Coordinate lastin; //  Last input value for differential term
 
 	// Time related
 	clock_t lasttime; // Stores the time when the control loop ran last time

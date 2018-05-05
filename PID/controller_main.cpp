@@ -42,7 +42,7 @@ Setpoint_Queue* setpoints;
 bool run, throttle_active, steer_active;
 double dKp = 0.2, dKi = 0, dKd = 0.1, aKp = 0.5, aKi = 0, aKd = 0;
 
-int main(){ 
+int main(){
 	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
 	sem_t *servo_sem = sem_open(SERVOSEM, 1);
 	sem_t *pos_sem = sem_open(POSITSEM, 1);
@@ -83,10 +83,11 @@ int main(){
 	struct pid_params *pid_inputs = (struct pid_params *)pos_ptr;
 
 	// Copying shared mem values into Coordinate pointers & checking if active
-	double *throttle_out = new double; 
-	double *steer_out = new double; 
-	Coordinate *current = new Coordinate(); 
-	Coordinate *setpoint = new Coordinate();   
+	double *throttle_out = new double;
+	double *steer_out = new double;
+	Coordinate *current = new Coordinate(0,0,0);
+	Coordinate *setpoint = new Coordinate(0,0,0);
+
 	*current = pid_inputs->location;
 	run = true;
 	CoordinateMap crd_map = CoordinateMap();
@@ -101,7 +102,7 @@ int main(){
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);
 	throttle_active = true;
 	steer_active = true;
-	 
+
 	while(run){
 
 		sem_wait(servo_sem);
@@ -111,28 +112,23 @@ int main(){
 		}
 		else{
 			// Get updated location info from shared mem
-			*current = pid_inputs->location; 
+			*current = pid_inputs->location;
 			*setpoint = setpoints.current_point();
-		 
+
 
 			// Compute output values:
 			controller.compute();
-			cout << " compute " << endl; 
 			// Update Values to pointers if parameter is active:
 			if (throttle_active){
-				cout << *throttle_out << endl; 
 				actuation_vals->throttle = (float)*throttle_out;
-				cout << "throttle" << endl; 
 			}
 			if (steer_active){
 				actuation_vals->steer = (float)*steer_out;
-				cout << "steer" << endl; 
 			}
 
 			// Switch point if within a half meter of the goal
 			if(controller.get_dst_err() <= 0.2){
 				setpoints.pop_front();
-				cout << "switch point" << endl; 
 				*setpoint = setpoints.current_point();
 			}
 
@@ -145,7 +141,7 @@ int main(){
 		}
 
 		// Post to shared memory
-		sem_post(servo_sem); 
+		sem_post(servo_sem);
 	}
 
 	return 0;

@@ -47,8 +47,8 @@ void PID::compute() {
 		return;
 
 	// Copying prevents modifying pointers to shared mem coordinates
-	Coordinate curr = Coordinate(current->getX(),current->getY(),current->getAngle());
-	Coordinate set_prime = Coordinate(setpoint->getX() - current->getX(),setpoint->getY()-current->getY());
+	Coordinate curr_t = Coordinate(current->getX(),current->getY(),current->getAngle());
+	Coordinate set_prime = Coordinate(setpoint->getX() - curr_t.getX(),setpoint->getY() - curr_t.getY());
 	double ang_err_t, dst_err_t;
 
 	// Converting Setpoint angle to polar:
@@ -60,30 +60,33 @@ void PID::compute() {
 	}
 
 	// Converting car's angle to polar:
-	if(!sign(curr.getAngle())){
-		curr.setAngle(std::abs(curr.getAngle()) + (PI/2));
-	} else if (sign(curr.getAngle()) && (curr.getAngle() <= (PI/2))){
-		curr.setAngle(((PI/2) - curr.getAngle()));
+	if(!sign(curr_t.getAngle())){
+		curr_t.setAngle(abs(curr_t.getAngle()) + (PI/2));
+	} else if (sign(curr_t.getAngle()) && (curr_t.getAngle() <= (PI/2))){
+		curr_t.setAngle(((PI/2) - curr_t.getAngle()));
 	}else{
-		curr.setAngle((5*PI/2)- curr.getAngle());
+		curr_t.setAngle((5*PI/2)- curr_t.getAngle());
 	}
 
 	// Calculating angular error, correcting for values over 180 degrees (PI radians):
-	ang_err_t = curr.getAngle() - set_prime.getAngle();
-	if(std::abs(ang_err_t) > PI){
-		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - std::abs(ang_err_t)));
+	ang_err_t = curr_t.getAngle() - set_prime.getAngle();
+	if(abs(ang_err_t) > PI){
+		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - abs(ang_err_t)));
 	}
-
+	cout << "(PID)Car: (" << curr_t.getX() << ", " << curr_t.getY() << ", " << curr_t.getAngle() << ") ";
+	cout << "(PID)Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") " << endl;
+	cout << "(PID)ANG ERR: " << ang_err_t << endl;
 	// Calculating distance error, if the setpoint is behind us, abs(ang_err) > PI/2
 	dst_err_t = euclidean_dist(*current, *setpoint);
+	cout << "(PID)DIST ERR: " << dst_err_t << endl;
 
 	// Updating calculated error to object
 	dst_err = dst_err_t;
 	ang_err = ang_err_t;
 
 	// Computing Difference between this time & last
-	ang_dif = std::abs(curr.getAngle() - lastin->getAngle());
-	dst_dif = euclidean_dist(curr, *lastin);
+	ang_dif = abs(curr_t.getAngle() - lastin.getAngle());
+	dst_dif = euclidean_dist(curr_t, lastin);
 
 	// Compute Integral values, enforce that they're within bounds
 	ang_int += aKi * ang_err;
@@ -92,14 +95,16 @@ void PID::compute() {
 	dst_int = enforce_bounds(dst_int);
 
 	// Compute PID output, check if its within bound, update shared pointer
+
 	double steer = (aKp*ang_err) + ang_int - (aKd*ang_dif);
-	double throttle = (dKp*ang_err) + dst_int - (dKd*dst_dif);
+	double throttle = (dKp*dst_err) + dst_int - (dKd*dst_dif);
+
 	*steer_out = enforce_bounds(steer);
 	*throttle_out = enforce_bounds(throttle);
 
 	// Keep track of some values for next calculation
 	lasttime = clock();
-	*lastin = curr;
+	lastin = curr_t;
 }
 
 void PID::tune(double dKp_in, double dKi_in, double dKd_in, double aKp_in, double aKi_in, double aKd_in) {
