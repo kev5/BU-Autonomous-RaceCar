@@ -6,7 +6,7 @@
 #define PID_PID_H
 
 #include "../include/Coordinate.h"
-#include "../include/Waypoint_Queue.h"
+#include "../include/Setpoint_Queue.h"
 #include <ctime>
 #include <cmath>
 

@@ -12,9 +12,10 @@
 
 // Project File Includes
 #include "PID.h"
-#include "../include/Waypoint_Queue.h"
+#include "../include/Setpoint_Queue.h"
 #include "../include/pid_params.h"
 #include "../include/shared_def.h"
+#include "../include/CoordinateMap.h"
 
 // Shared Memory Definitions
 #define SERVOSEM "/servosemaphore"
@@ -38,6 +39,7 @@ double * steer_out;
 // Pointers to position variables:
 Coordinate* current;
 Coordinate* setpoint;
+Setpoint_Queue* setpoints;
 
 // Initial Values for controller:
 bool run, throttle_active, steer_active;
@@ -88,34 +90,57 @@ int main(){
 	*current = pid_inputs->location;
 	run = pid_inputs->active;
 
+	CoordinateMap crd_map = CoordinateMap();
+	Setpoint_Queue setpoints = Setpoint_Queue();
+	setpoints.push_back(crd_map.getCoords(9));
+	setpoints.push_back(crd_map.getCoords(12));
+	setpoints.push_back(Coordinate(30.1042,-1.52545));
+	setpoints.push_back(crd_map.getCoords(29));
+	setpoints.push_back(crd_map.getCoords(10));
+	setpoints.push_back(crd_map.getCoords(7));
+
+
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);
 
 	while(run){
 		sem_wait(servo_sem);
-		// Get updated location info from shared mem
-		*current = pid_inputs->location;
-		*setpoint = pid_inputs->setpoint;
 
-		// Compute output values:
-		controller.compute();
-
-		// Update Values to pointers if parameter is active:
-		if (throttle_active){
-			actuation_vals->throttle = (float)*throttle_out;
+		if(setpoints.is_empty()){
+			actuation_vals->throttle = 0;
+			actuation_vals->steer = 0;
 		}
-		if (steer_active){
-			actuation_vals->steer = (float)*steer_out;
+		else{
+			// Get updated location info from shared mem
+			*current = pid_inputs->location;
+			*setpoint = setpoints.current_point();
+
+			// Compute output values:
+			controller.compute();
+
+			// Update Values to pointers if parameter is active:
+			if (throttle_active){
+				actuation_vals->throttle = (float)*throttle_out;
+			}
+			if (steer_active){
+				actuation_vals->steer = (float)*steer_out;
+			}
+
+			// Switch point if within a half meter of the goal
+			if(controller.get_dst_err() <= 0.2){
+				setpoints.pop_front();
+				*setpoint = setpoints.current_point();
+			}
+
+			// Printout of results
+			// TODO: Make a window that displays results, & also log the last run
+			cout << "Car: (" << current->getX() << ", " << current->getY() << ", " << current->getAngle() << ") ";
+			cout << "Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") ";
+			cout << "ERR: (" << controller.get_dst_err() << " m., " << controller.get_ang_err() << " Rads.)";
+			cout << "Out: (" << *throttle_out << ", " << *steer_out << ")" << endl;
 		}
 
 		// Post to shared memory
 		sem_post(servo_sem);
-
-		// Printout of results
-		// TODO: Make a window that displays results, & also log the last run
-		cout << "Car: ("<<current->getX() << ", " << current->getY() << ", " << current->getAngle() << ") ";
-		cout << "Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") ";
-		cout << "ERR: (" << controller.get_dst_err() << " m., " << controller.get_ang_err() << " Rads.)";
-		cout << "Out: (" << *throttle_out << ", " << *steer_out << ")" << endl;
 	}
 
 	return 0;

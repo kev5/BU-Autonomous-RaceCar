@@ -1,4 +1,4 @@
-CC= gcc
+CC= g++
 CFLAGS= -lrt -pthread -lm
 DEPS = pid_params.h shared_def.h pid_source.h
 INCDIR = ../include

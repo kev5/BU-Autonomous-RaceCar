@@ -16,10 +16,10 @@ public:
 
     Coordinate getCoords(int marker_id);
 
-    void add_marker(int value, coordinate position);
+    void add_marker(int value, Coordinate position);
 
 private:
-    std::map<int, coordinate> aruco_map;
+    std::map<int, Coordinate> aruco_map;
 
 };
 
