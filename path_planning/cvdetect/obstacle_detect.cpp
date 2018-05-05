@@ -73,7 +73,7 @@ void detectAndDisplay( Mat frame )
     Mat frame_gray;
     Mat res_gray;
 
-    int angle;
+    float angle;
 
     cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
     resize(frame_gray, res_gray, Size(320, 240))
@@ -86,8 +86,8 @@ void detectAndDisplay( Mat frame )
     {
         rectangle(frame, obst[i].x, obst[i].y, obst[i].x+obst[i].width, obst[i].y+obst[i].height, Scalar(255,0,255),2  )
         Point center( obst[i].x + obst[i].width/2, obst[i].y + obst[i].height/2 );
-        
-        angle = (center.x - 160)/320
+
+        angle = (center.x - 160)/float(320)
 
         d = calculateDist(obst[i].x + obst[i].width, res_gray)
 
