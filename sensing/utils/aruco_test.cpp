@@ -128,6 +128,37 @@ void printInfo(cv::Mat &im){
  ************************************/
 int main(int argc, char** argv) {
     try {
+        // create new semaphore
+        #define SNAME "/position_sem"
+        sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+        if (!sem) {
+            sem_unlink(SNAME);
+            sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
+            if(!sem) {
+                fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
+                exit(1);
+            }
+        }
+    
+        // creates a shared memory block
+
+        int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
+        if (fid == -1){
+            perror("shm_open error \n");
+            exit(1); 
+        }
+        ftruncate(fid,4096);
+
+        // Mapping Successful
+        void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
+            if (ptr == MAP_FAILED){
+            perror("error with mapping");
+            return -1;
+        }
+        sem_init(sem,1,1);
+
+        struct pid_params* positionPtr = (struct pid_params*) ptr;
+        sem = sem_open("/position_sem",1);
 
         CmdLineParser cml(argc, argv);
         ///////////  PARSE ARGUMENTS
@@ -182,38 +213,6 @@ int main(int argc, char** argv) {
 	    char key = 0;
         int index = 0,indexSave=0;
 
-
-		// create new semaphore
-		#define SNAME "/position_sem"
-		sem_t* sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
-		if (!sem) {
-			sem_unlink(SNAME);
-			sem = sem_open(SNAME, O_CREAT | O_EXCL, 2000);
-			if(!sem) {
-				fprintf(stderr, "Unable to reinit semaphore %s\n", SNAME);
-				exit(1);
-			}
-		}
-	
-		// creates a shared memory block
-
-		int fid = shm_open("position", O_CREAT | O_RDWR, 2000);
-		if (fid == -1){
-			perror("shm_open error \n");
-			exit(1); 
-		}
-		ftruncate(fid,4096);
-
-		// Mapping Successful
-		void * ptr = mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, fid, 0);
-	        if (ptr == MAP_FAILED){
-	        perror("error with mapping");
-	        return -1;
-		}
-		sem_init(sem,1,1);
-
-		struct pid_params* positionPtr = (struct pid_params*) ptr;
-		sem = sem_open("/position_sem",1);
 
         // Hardcoding setpoint:
         positionPtr->setpoint.x = 3.0;
