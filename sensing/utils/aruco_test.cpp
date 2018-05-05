@@ -213,12 +213,6 @@ int main(int argc, char** argv) {
 	    char key = 0;
         int index = 0,indexSave=0;
 
-
-        // Hardcoding setpoint:
-        positionPtr->setpoint.x = 3.0;
-        positionPtr->setpoint.y = 1.9;
-        positionPtr->setpoint.angle = 0;
-
 	    // capture until press ESC or until the end of the video
         CoordinateMap* arucos = new CoordinateMap();
 
@@ -280,16 +274,16 @@ int main(int argc, char** argv) {
 				}
 
                 // Calculating current location based off of marker(s) seen
-                struct coordinate marker_location = arucos->getCoords(TheMarkers[i].id);
-                positionPtr->location.x = marker_location.x + Tvec.at<float>(0,0);
+                struct coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
+                positionPtr->location.setX(marker_location.x + Tvec.at<float>(0,0)); 
 		// positionPtr->location.x = Tvec.at<float>(0,0);
-                positionPtr->location.y = marker_location.y + Tvec.at<float>(2,0);
+                positionPtr->location.setY(marker_location.y + Tvec.at<float>(2,0)); 
 		// positionPtr->location.y = Tvec.at<float>(2,0);
-                positionPtr->location.angle = z_angle;
+                positionPtr->location.setAngle(z_angle);
 				cout << "Marker ID = " << TheMarkers[i].id << endl; 
-				cout << "X Pos = " << positionPtr->location.x << endl;
-				cout << "Y Pos = " << positionPtr->location.y << endl;
-				cout << "Angle = " << positionPtr->location.angle << endl;
+				cout << "X Pos = " << positionPtr->location.getX() << endl;
+				cout << "Y Pos = " << positionPtr->location.getY() << endl;
+				cout << "Angle = " << positionPtr->location.getAngle() << endl;
 
 				//write the distance to memory at address 2000
 				sem_post(sem);
