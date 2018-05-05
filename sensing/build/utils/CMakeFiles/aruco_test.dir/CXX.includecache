@@ -108,29 +108,19 @@ map
 opencv2/core.hpp
 -
 
+/home/nvidia/BU-Autonomous-RaceCar/include/Coordinate.h
+cstdlib
+-
+
 /home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h
-pid_source.h
-/home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
+Coordinate.h
+/home/nvidia/BU-Autonomous-RaceCar/include/Coordinate.h
 map
 -
 
 /home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h
 pid_source.h
 /home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
-
-/home/nvidia/BU-Autonomous-RaceCar/include/pid_source.h
-time.h
--
-stdbool.h
--
-stdint.h
--
-stdlib.h
--
-math.h
--
-stdio.h
--
 
 /home/nvidia/BU-Autonomous-RaceCar/sensing/utils/aruco_test.cpp
 aruco.h
