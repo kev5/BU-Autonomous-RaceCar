@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
-            int vIdx = 0;
+            int vIdx = 1;
             // check if the :idx is here
             char cad[100];
             if (TheInputVideo.find(":") != string::npos) {
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
                 sscanf(TheInputVideo.c_str(), "%s %d", cad, &vIdx);
             }
             cout << "Opening camera index " << vIdx << endl;
-            TheVideoCapturer.open(vIdx);
+            	TheVideoCapturer.open(vIdx);
             waitTime = 10;
             isVideo=true;
         }

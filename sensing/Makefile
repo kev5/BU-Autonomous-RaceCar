@@ -56,28 +56,6 @@ CMAKE_BINARY_DIR = /home/nvidia/BU-Autonomous-RaceCar/sensing
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -100,6 +78,18 @@ install/strip/fast: install/strip
 
 .PHONY : install/strip/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -110,6 +100,16 @@ install/local: preinstall
 install/local/fast: install/local
 
 .PHONY : install/local/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -181,19 +181,6 @@ aruco/fast:
 .PHONY : aruco/fast
 
 #=============================================================================
-# Target rules for targets named aruco_simple
-
-# Build rule for target.
-aruco_simple: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 aruco_simple
-.PHONY : aruco_simple
-
-# fast build rule for target.
-aruco_simple/fast:
-	$(MAKE) -f utils/CMakeFiles/aruco_simple.dir/build.make utils/CMakeFiles/aruco_simple.dir/build
-.PHONY : aruco_simple/fast
-
-#=============================================================================
 # Target rules for targets named aruco_print_marker
 
 # Build rule for target.
@@ -207,19 +194,6 @@ aruco_print_marker/fast:
 .PHONY : aruco_print_marker/fast
 
 #=============================================================================
-# Target rules for targets named aruco_test
-
-# Build rule for target.
-aruco_test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 aruco_test
-.PHONY : aruco_test
-
-# fast build rule for target.
-aruco_test/fast:
-	$(MAKE) -f utils/CMakeFiles/aruco_test.dir/build.make utils/CMakeFiles/aruco_test.dir/build
-.PHONY : aruco_test/fast
-
-#=============================================================================
 # Target rules for targets named aruco_print_dictionary
 
 # Build rule for target.
@@ -231,6 +205,32 @@ aruco_print_dictionary: cmake_check_build_system
 aruco_print_dictionary/fast:
 	$(MAKE) -f utils/CMakeFiles/aruco_print_dictionary.dir/build.make utils/CMakeFiles/aruco_print_dictionary.dir/build
 .PHONY : aruco_print_dictionary/fast
+
+#=============================================================================
+# Target rules for targets named aruco_simple
+
+# Build rule for target.
+aruco_simple: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 aruco_simple
+.PHONY : aruco_simple
+
+# fast build rule for target.
+aruco_simple/fast:
+	$(MAKE) -f utils/CMakeFiles/aruco_simple.dir/build.make utils/CMakeFiles/aruco_simple.dir/build
+.PHONY : aruco_simple/fast
+
+#=============================================================================
+# Target rules for targets named aruco_test
+
+# Build rule for target.
+aruco_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 aruco_test
+.PHONY : aruco_test
+
+# fast build rule for target.
+aruco_test/fast:
+	$(MAKE) -f utils/CMakeFiles/aruco_test.dir/build.make utils/CMakeFiles/aruco_test.dir/build
+.PHONY : aruco_test/fast
 
 #=============================================================================
 # Target rules for targets named aruco_tracker
@@ -272,6 +272,19 @@ aruco_simple_markermap/fast:
 .PHONY : aruco_simple_markermap/fast
 
 #=============================================================================
+# Target rules for targets named aruco_test_markermap
+
+# Build rule for target.
+aruco_test_markermap: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 aruco_test_markermap
+.PHONY : aruco_test_markermap
+
+# fast build rule for target.
+aruco_test_markermap/fast:
+	$(MAKE) -f utils_markermap/CMakeFiles/aruco_test_markermap.dir/build.make utils_markermap/CMakeFiles/aruco_test_markermap.dir/build
+.PHONY : aruco_test_markermap/fast
+
+#=============================================================================
 # Target rules for targets named aruco_create_markermap
 
 # Build rule for target.
@@ -296,19 +309,6 @@ aruco_markermap_pix2meters: cmake_check_build_system
 aruco_markermap_pix2meters/fast:
 	$(MAKE) -f utils_markermap/CMakeFiles/aruco_markermap_pix2meters.dir/build.make utils_markermap/CMakeFiles/aruco_markermap_pix2meters.dir/build
 .PHONY : aruco_markermap_pix2meters/fast
-
-#=============================================================================
-# Target rules for targets named aruco_test_markermap
-
-# Build rule for target.
-aruco_test_markermap: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 aruco_test_markermap
-.PHONY : aruco_test_markermap
-
-# fast build rule for target.
-aruco_test_markermap/fast:
-	$(MAKE) -f utils_markermap/CMakeFiles/aruco_test_markermap.dir/build.make utils_markermap/CMakeFiles/aruco_test_markermap.dir/build
-.PHONY : aruco_test_markermap/fast
 
 #=============================================================================
 # Target rules for targets named aruco_calibration_fromimages
@@ -355,24 +355,24 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... uninstall"
 	@echo "... install/strip"
+	@echo "... uninstall"
+	@echo "... install"
 	@echo "... install/local"
+	@echo "... list_install_components"
 	@echo "... edit_cache"
 	@echo "... aruco"
-	@echo "... aruco_simple"
 	@echo "... aruco_print_marker"
-	@echo "... aruco_test"
 	@echo "... aruco_print_dictionary"
+	@echo "... aruco_simple"
+	@echo "... aruco_test"
 	@echo "... aruco_tracker"
 	@echo "... aruco_batch_processing"
 	@echo "... aruco_simple_markermap"
+	@echo "... aruco_test_markermap"
 	@echo "... aruco_create_markermap"
 	@echo "... aruco_markermap_pix2meters"
-	@echo "... aruco_test_markermap"
 	@echo "... aruco_calibration_fromimages"
 	@echo "... aruco_calibration"
 	@echo "... aruco_test_svm"
