@@ -37,12 +37,18 @@ void Coordinate::setId(int id) {
 	Coordinate::id = id;
 }
 
+Coordinate::Coordinate() {
+	this->x = NULL;
+	this->y = NULL;
+	this->angle = NULL;
+	this->id = NULL;
+}
+
 Coordinate::Coordinate(double x, double y) {
 	this->x = x;
 	this->y = y;
 	this->angle = NULL;
 	this->id = NULL;
-
 }
 
 Coordinate::Coordinate(double x, double y, double angle) {

@@ -9,6 +9,7 @@
 
 class Coordinate{
 public:
+	Coordinate();
 	Coordinate(double x, double y);
 	Coordinate(double x, double y, double angle);
 	Coordinate(double x, double y, double angle, int id);
