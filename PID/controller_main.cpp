@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <>
 
 // Project File Includes
 #include "PID.h"
@@ -87,7 +88,7 @@ int main(){
 
 	// Copying shared mem values into Coordinate pointers & checking if active
 	*setpoint = pid_inputs->setpoint;
-	*current = pid_inputs->location;
+	Coordinate *current = pid_inputs->location;
 	run = pid_inputs->active;
 
 	CoordinateMap crd_map = CoordinateMap();

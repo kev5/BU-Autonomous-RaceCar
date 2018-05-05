@@ -9,21 +9,74 @@
 
 class Coordinate{
 public:
-	Coordinate();
-	Coordinate(double x, double y);
-	Coordinate(double x, double y, double angle);
-	Coordinate(double x, double y, double angle, int id);
-	Coordinate(double x, double y, int id);
 
-	double getX() const;
-	double getY() const;
-	double getAngle() const;
-	int getId() const;
+	Coordinate() {
+		this->x = NULL;
+		this->y = NULL;
+		this->angle = NULL;
+		this->id = NULL;
+	}
 
-	void setX(double x);
-	void setY(double y);
-	void setAngle(double angle);
-	void setId(int id);
+	Coordinate(double x, double y) {
+		this->x = x;
+		this->y = y;
+		this->angle = NULL;
+		this->id = NULL;
+	}
+
+	Coordinate(double x, double y, double angle) {
+		this->x = x;
+		this->y = y;
+		this->angle = angle;
+		this->id = NULL;
+	}
+
+	Coordinate(double x, double y, double angle, int id) {
+		this->x = x;
+		this->y = y;
+		this->angle = angle;
+		this->id = id;
+	}
+
+	Coordinate(double x, double y, int id) {
+		this->x = x;
+		this->y = y;
+		this->angle = NULL;
+		this->id = id;
+	}
+
+	double getX() const {
+		return x;
+	}
+
+	double getY() const {
+		return y;
+	}
+
+	double getAngle() const {
+		return angle;
+	}
+
+	int getId() const {
+		return id;
+	}
+
+	void setX(double x) {
+		x = x;
+	}
+
+	void setY(double y) {
+		y = y;
+	}
+
+	void setAngle(double angle) {
+		angle = angle;
+	}
+
+	void setId(int id) {
+		id = id;
+	}
+
 
 private:
 	double x;

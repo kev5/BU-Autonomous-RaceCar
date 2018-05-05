@@ -11,18 +11,48 @@
 
 class Setpoint_Queue {
 public:
-	Setpoint_Queue();
+	Setpoint_Queue() {
+		// Constructor to initialize the setpoint queue:
+		set_queue.clear();
+		begin = set_queue.begin();
+	}
 
-	void pop_front();
-	Coordinate current_point();
-	Coordinate next_point();
+	void pop_front() {
+		set_queue.pop_front();
+		begin = set_queue.begin();
+	}
 
-	void push_back(Coordinate new_point);
-	void modify(Coordinate change_point);
-	void remove(Coordinate remove_point);
-	void reset();
+	void push_back(Coordinate new_point) {
+		set_queue.push_back(new_point);
+		begin = set_queue.begin();
+	}
 
-	bool is_empty();
+	void modify(Coordinate change_point) {
+
+	}
+
+	void remove(Coordinate remove_point) {
+
+	}
+
+	void reset() {
+		set_queue.clear();
+		begin = set_queue.begin();
+	}
+
+	Coordinate current_point() {
+		return *begin;
+	}
+
+	Coordinate next_point() {
+		auto returnval = *(begin++);
+		begin = set_queue.begin();
+		return returnval;
+	}
+
+	bool is_empty(){
+		return set_queue.empty();
+	}
 
 private:
 	std::deque<Coordinate> set_queue;
