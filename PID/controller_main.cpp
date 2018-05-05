@@ -2,14 +2,13 @@
 // Created by Nicholas Arnold on 4/22/18.
 //
 
-// Lnaguage Includes
+// Language Includes
 #include <iostream>
 #include <semaphore.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <>
 
 // Project File Includes
 #include "PID.h"

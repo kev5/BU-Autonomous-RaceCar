@@ -62,21 +62,20 @@ public:
 	}
 
 	void setX(double x) {
-		x = x;
+		this->x = x;
 	}
 
 	void setY(double y) {
-		y = y;
+		this->y = y;
 	}
 
 	void setAngle(double angle) {
-		angle = angle;
+		this->angle = angle;
 	}
 
 	void setId(int id) {
-		id = id;
+		this->id = id;
 	}
-
 
 private:
 	double x;
