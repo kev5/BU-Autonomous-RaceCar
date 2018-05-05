@@ -92,12 +92,12 @@ int main(){
 
 	CoordinateMap crd_map = CoordinateMap();
 	Setpoint_Queue setpoints = Setpoint_Queue();
-	setpoints.push_back(crd_map.getCoords(9));
-	setpoints.push_back(crd_map.getCoords(12));
+	setpoints.push_back(crd_map.get_coords(9));
+	setpoints.push_back(crd_map.get_coords(12));
 	setpoints.push_back(Coordinate(30.1042,-1.52545));
-	setpoints.push_back(crd_map.getCoords(29));
-	setpoints.push_back(crd_map.getCoords(10));
-	setpoints.push_back(crd_map.getCoords(7));
+	setpoints.push_back(crd_map.get_coords(29));
+	setpoints.push_back(crd_map.get_coords(10));
+	setpoints.push_back(crd_map.get_coords(7));
 
 
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);

@@ -40,8 +40,8 @@ void Coordinate::setId(int id) {
 Coordinate::Coordinate(double x, double y) {
 	this->x = x;
 	this->y = y;
-	this->angle = nullptr;
-	this->id = nullptr;
+	this->angle = NULL;
+	this->id = NULL;
 
 }
 

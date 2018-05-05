@@ -48,7 +48,7 @@ Coordinate CoordinateMap::get_coords(int marker_id) {
 		return it->second; // returns coordinate obj instead of ID
 	}
 	else{
-		return NULL;
+		return nullptr;
 	}
 }
 
