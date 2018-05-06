@@ -97,7 +97,7 @@ void PID::compute() {
 	double steer = (aKp*ang_err) + ang_int - (aKd*ang_dif);
 	double throttle = (dKp*dst_err) + dst_int - (dKd*dst_dif);
 
-	*steer_out = enforce_bounds(steer);
+	*steer_out = steer;
 	*throttle_out = enforce_bounds(throttle);
 
     cout << "(PID) STEER: " << steer << endl;
@@ -142,7 +142,7 @@ void PID::change_sampling(int time) {
 	}
 }
 
-void PID::change_limits(double min, double max) {
+void PID::change_limits(double min, double max){
 	if(min >= max)
 		return;
 
