@@ -13,9 +13,12 @@ PID::PID(Coordinate *current_pos, Coordinate *setpoint, double dKp, double dKi, 
 	this->dKd = dKd;
 	this->aKp = aKp;
 	this->aKi = aKi;
-	this->aKp = aKd;
+	this->aKd = aKd;
 	this->steer_out = steer_out;
 	this->throttle_out = throttle_out;
+	out_min = -1;
+	out_max = 1;
+
 
 	this->sampletime = 100*(CLOCKS_PER_SEC / 1000); // Default time is 100ms
 	this->active = false;
