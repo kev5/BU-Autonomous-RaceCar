@@ -20,7 +20,7 @@ PID::PID(Coordinate *current_pos, Coordinate *setpoint, double dKp, double dKi, 
 	this->sampletime = 100*(CLOCKS_PER_SEC / 1000); // Default time is 100ms
 	this->active = false;
 	this->direction = true;
-	this->change_limits(1,1);
+	this->change_limits(-1,1);
 	this->lasttime = clock() - sampletime;
 	this->active = true;
 }
@@ -74,12 +74,9 @@ void PID::compute() {
 	if(abs(ang_err_t) > PI){
 		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - abs(ang_err_t)));
 	}
-	cout << "(PID)Car: (" << curr_t.getX() << ", " << curr_t.getY() << ", " << curr_t.getAngle() << ") ";
-	cout << "(PID)Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") " << endl;
-	cout << "(PID)ANG ERR: " << ang_err_t << endl;
+
 	// Calculating distance error, if the setpoint is behind us, abs(ang_err) > PI/2
 	dst_err_t = euclidean_dist(*current, *setpoint);
-	cout << "(PID)DIST ERR: " << dst_err_t << endl;
 
 	// Updating calculated error to object
 	dst_err = dst_err_t;
@@ -102,6 +99,9 @@ void PID::compute() {
 
 	*steer_out = enforce_bounds(steer);
 	*throttle_out = enforce_bounds(throttle);
+
+    cout << "(PID) STEER: " << steer << endl;
+    cout << "(PID) THROTTLE: " << throttle << endl;
 
 	// Keep track of some values for next calculation
 	lasttime = clock();
