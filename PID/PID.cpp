@@ -23,6 +23,9 @@ PID::PID(Coordinate *current_pos, Coordinate *setpoint, double dKp, double dKi, 
 	this->change_limits(-1,1);
 	this->lasttime = clock() - sampletime;
 	this->active = true;
+
+	ang_int = 0;
+	dst_int = 0;
 }
 
 bool PID::need_compute() {
@@ -93,7 +96,6 @@ void PID::compute() {
 	dst_int = enforce_bounds(dst_int);
 
 	// Compute PID output, check if its within bound, update shared pointer
-
 	double steer = (aKp*ang_err) + ang_int - (aKd*ang_dif);
 	double throttle = (dKp*dst_err) + dst_int - (dKd*dst_dif);
 
