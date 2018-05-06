@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
         // read camera parameters
         TheCameraParameters.readFromXMLFile("out_camera_calibration.yml");
 
-        float TheMarkerSize = 0.138; 
+        float TheMarkerSize = 0.205; 
 
         ///////////  OPEN VIDEO
         // read from camera or from  file
