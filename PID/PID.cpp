@@ -16,19 +16,17 @@ PID::PID(Coordinate *current_pos, Coordinate *setpoint, double dKp, double dKi, 
 	this->aKd = aKd;
 	this->steer_out = steer_out;
 	this->throttle_out = throttle_out;
+
 	out_min = -1;
 	out_max = 1;
-
+	active = true;
+    ang_int = 0;
+    dst_int = 0;
+    direction = true;
 
 	this->sampletime = 100*(CLOCKS_PER_SEC / 1000); // Default time is 100ms
-	this->active = false;
-	this->direction = true;
 	this->change_limits(-1,1);
 	this->lasttime = clock() - sampletime;
-	this->active = true;
-
-	ang_int = 0;
-	dst_int = 0;
 }
 
 bool PID::need_compute() {
@@ -102,15 +100,8 @@ void PID::compute() {
 	double steer = (aKp*ang_err) + ang_int - (aKd*ang_dif);
 	double throttle = (dKp*dst_err) + dst_int - (dKd*dst_dif);
 
-	*steer_out = steer;
+	*steer_out = enforce_bounds(steer);
 	*throttle_out = enforce_bounds(throttle);
-	cout << "(PID) ang_err: " << ang_err << endl; 
-	cout << "(PID) ang_int: " << ang_int << endl; 
-	cout << "(PID) ang_diff: " << ang_dif << endl; 
-	cout << "(PID) akd*ang_diff" << aKd*ang_dif << endl; 
-
-    cout << "(PID) STEER: " << steer << endl;
-    cout << "(PID) THROTTLE: " << throttle << endl;
 
 	// Keep track of some values for next calculation
 	lasttime = clock();
