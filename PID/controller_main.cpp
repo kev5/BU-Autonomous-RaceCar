@@ -118,6 +118,7 @@ int main(){
 
 			// Compute output values:
 			controller.compute();
+
 			// Update Values to pointers if parameter is active:
 			if (throttle_active){
 				actuation_vals->throttle = (float)*throttle_out;

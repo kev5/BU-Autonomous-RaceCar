@@ -22,6 +22,7 @@ PID::PID(Coordinate *current_pos, Coordinate *setpoint, double dKp, double dKi, 
 	this->direction = true;
 	this->change_limits(1,1);
 	this->lasttime = clock() - sampletime;
+	this->active = true;
 }
 
 bool PID::need_compute() {
