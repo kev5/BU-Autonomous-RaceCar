@@ -100,6 +100,10 @@ void PID::compute() {
 	*steer_out = steer;
 	*throttle_out = enforce_bounds(throttle);
 	cout << "(PID) ang_err: " << ang_err << endl; 
+	cout << "(PID) ang_int: " << ang_int << endl; 
+	cout << "(PID) ang_diff: " << ang_diff << endl; 
+	cout << "(PID) akd*ang_diff" << akd*ang_diff << endl; 
+
     cout << "(PID) STEER: " << steer << endl;
     cout << "(PID) THROTTLE: " << throttle << endl;
 
