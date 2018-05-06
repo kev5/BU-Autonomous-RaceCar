@@ -38,11 +38,10 @@ void *servo_ptr;
 // Pointers to position variables:
 Setpoint_Queue* setpoints;
 
-// Initial Values for controller:
-bool run, throttle_active, steer_active;
-double dKp = 0.2, dKi = 0, dKd = 0.1, aKp = 0.5, aKi = 0, aKd = 0;
-
 int main(){
+	bool run, throttle_active, steer_active;
+	double dKp = 0.2, dKi = 0, dKd = 0, aKp = 0.5, aKi = 0, aKd = 0;
+
 	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
 	sem_t *servo_sem = sem_open(SERVOSEM, 1);
 	sem_t *pos_sem = sem_open(POSITSEM, 1);
@@ -84,7 +83,9 @@ int main(){
 
 	// Copying shared mem values into Coordinate pointers & checking if active
 	double *throttle_out = new double;
+	*throttle_out = 0;
 	double *steer_out = new double;
+	*steer_out = 0;
 	Coordinate *current = new Coordinate(0,0,0);
 	Coordinate *setpoint = new Coordinate(0,0,0);
 
