@@ -272,7 +272,7 @@ int main(int argc, char** argv) {
 					y_angle = atan2(-Rmat.at<float>(2,0),sy);
 					z_angle = 0;
 				}
-
+            
                 // Calculating current location based off of marker(s) seen
                 Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
                 cout << "Coordinate Map X" << marker_location.getX() << endl; 
@@ -283,6 +283,8 @@ int main(int argc, char** argv) {
 		        // positionPtr->location.y = Tvec.at<float>(2,0);
                 positionPtr->location.setAngle(z_angle);
 				cout << "Marker ID = " << TheMarkers[i].id << endl; 
+                cout << "X Dist = " << Tvec.at<float>(0,0) << endl; 
+                cout << "Y Dist = " << Tvec.at<float>(2,0) << endl; 
 				cout << "X Pos = " << positionPtr->location.getX() << endl;
 				cout << "Y Pos = " << positionPtr->location.getY() << endl;
 				cout << "Angle = " << positionPtr->location.getAngle() << endl;
