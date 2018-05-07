@@ -80,6 +80,8 @@ int main(){
 
 	struct throttle_steer *actuation_vals = (struct throttle_steer *)servo_ptr;
 	struct pid_params *pid_inputs = (struct pid_params *)pos_ptr;
+	actuation_vals->steer = 0;
+	actuation_vals->throttle = 0;
 
 	// Copying shared mem values into Coordinate pointers & checking if active
 	double *throttle_out = new double;
@@ -101,8 +103,23 @@ int main(){
 	setpoints.push_back(crd_map.get_coords(7));
 
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);
-	throttle_active = true;
-	steer_active = true;
+
+	throttle_active = false;
+	steer_active = false;
+	char t, s;
+	cout << "Throttle active? (y/n):";
+	cin >> t;
+	cout << endl;
+	cout << "Steer active? (y/n):";
+	cin >> s;
+	cout << endl;
+
+	if(t == 'y'){
+		throttle_active = true;
+	}
+	if(s == 'y'){
+		steer_active = true;
+	}
 
 	while(run){
 
@@ -124,8 +141,15 @@ int main(){
 			if (throttle_active){
 				actuation_vals->throttle = (float)*throttle_out;
 			}
+			else{
+				actuation_vals->throttle = 0;
+			}
+
 			if (steer_active){
 				actuation_vals->steer = (float)*steer_out;
+			}
+			else{
+				actuation_vals->steer = 0;
 			}
 
 			// Switch point if within a half meter of the goal
@@ -135,7 +159,6 @@ int main(){
 			}
 
 			// Printout of results
-			// TODO: Make a window that displays results, & also log the last run
 			cout << "Car: (" << current->getX() << ", " << current->getY() << ", " << current->getAngle() << ") ";
 			cout << "Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") ";
 			cout << "ERR: (" << controller.get_dst_err() << " m., " << controller.get_ang_err() << " Rads.)";
