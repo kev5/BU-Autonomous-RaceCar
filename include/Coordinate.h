@@ -45,13 +45,6 @@ public:
 		this->id = id;
 	}
 
-	Coordinate(const Coordinate& coord){
-		this->x = coord.getX();
-		this->y = coord.getY();
-		this->angle = coord.getAngle();
-		this->id = coord.getId();
-	}
-
 	double getX() const {
 		return x;
 	}
