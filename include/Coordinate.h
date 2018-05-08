@@ -11,24 +11,24 @@ class Coordinate{
 public:
 
 	Coordinate() {
-		this->x = NULL;
-		this->y = NULL;
-		this->angle = NULL;
-		this->id = NULL;
+		this->x = 0;
+		this->y = 0;
+		this->angle = 0;
+		this->id = 0;
 	}
 
 	Coordinate(double x, double y) {
 		this->x = x;
 		this->y = y;
-		this->angle = NULL;
-		this->id = NULL;
+		this->angle = 0;
+		this->id = 0;
 	}
 
 	Coordinate(double x, double y, double angle) {
 		this->x = x;
 		this->y = y;
 		this->angle = angle;
-		this->id = NULL;
+		this->id = 0;
 	}
 
 	Coordinate(double x, double y, double angle, int id) {
@@ -41,7 +41,7 @@ public:
 	Coordinate(double x, double y, int id) {
 		this->x = x;
 		this->y = y;
-		this->angle = NULL;
+		this->angle = 0;
 		this->id = id;
 	}
 

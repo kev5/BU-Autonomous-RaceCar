@@ -56,31 +56,31 @@ void PID::compute() {
 	Coordinate set_prime = Coordinate(setpoint->getX() - curr_t.getX(),setpoint->getY() - curr_t.getY());
 	double ang_err_t, dst_err_t;
 
-	// Converting Setpoint angle to polar:
-	set_prime.setAngle(atan(set_prime.getY()/set_prime.getX()));
-	if(!sign(set_prime.getX())){
-		set_prime.setAngle(set_prime.getAngle() + (PI/2));
-	} else if (sign(set_prime.getX()) && !sign(set_prime.getY())){
-		set_prime.setAngle(set_prime.getAngle() + (2*PI));
-	}
+	// Converting Set-point angle to polar:
+	set_prime.setAngle(atan2(set_prime.getY(),set_prime.getX())); // Returns in range -[PI , PI] (WRT. X+)
+	set_prime.setAngle((set_prime.getAngle() >=0) ? set_prime.getAngle() : PI + abs(set_prime.getAngle())); // [0, 2PI]
 
 	// Converting car's angle to polar:
 	if(!sign(curr_t.getAngle())){
+		// ~Quad II and III:
 		curr_t.setAngle(abs(curr_t.getAngle()) + (PI/2));
 	} else if (sign(curr_t.getAngle()) && (curr_t.getAngle() <= (PI/2))){
+		// ~Quad I:
 		curr_t.setAngle(((PI/2) - curr_t.getAngle()));
 	}else{
+		// ~Quad IV:
 		curr_t.setAngle((5*PI/2)- curr_t.getAngle());
 	}
 
 	// Calculating angular error, correcting for values over 180 degrees (PI radians):
 	ang_err_t = curr_t.getAngle() - set_prime.getAngle();
 	if(abs(ang_err_t) > PI){
-		ang_err_t = sign(ang_err_t) ? -((2*PI) - ang_err_t) : ((2*PI - abs(ang_err_t)));
+		ang_err_t = ang_err_t + (sign(ang_err_t) ? (-2*PI) :  (2*PI));
 	}
 
 	// Calculating distance error, if the setpoint is behind us, abs(ang_err) > PI/2
-	dst_err_t = euclidean_dist(*current, *setpoint);
+	dst_err_t = hypot(set_prime.getX(), set_prime.getY());
+
 
 	// Updating calculated error to object
 	dst_err = dst_err_t;
