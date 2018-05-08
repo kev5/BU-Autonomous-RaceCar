@@ -40,7 +40,7 @@ Setpoint_Queue* setpoints;
 
 int main(){
 	bool run, throttle_active, steer_active;
-	double dKp = 0.2, dKi = 0, dKd = 0, aKp = 0.5, aKi = 0, aKd = 0;
+	double dKp = 0.2, dKi = 0, dKd = 0, aKp = 0.4, aKi = 0, aKd = 0.15;
 
 	/* Initializing interaction with shared mem (based off loothrottle_king @ actuation files) */
 	sem_t *servo_sem = sem_open(SERVOSEM, 1);
@@ -95,12 +95,11 @@ int main(){
 	run = true;
 	CoordinateMap crd_map = CoordinateMap();
 	Setpoint_Queue setpoints = Setpoint_Queue();
-	setpoints.push_back(crd_map.get_coords(9));
-	//setpoints.push_back(crd_map.get_coords(12));
-	//setpoints.push_back(Coordinate(30.1042, 1.52545));
-	//setpoints.push_back(crd_map.get_coords(29));
-	//setpoints.push_back(crd_map.get_coords(10));
-	//setpoints.push_back(crd_map.get_coords(7));
+	setpoints.push_back(crd_map.get_coords(26));
+	setpoints.push_back(crd_map.get_coords(28));
+	setpoints.push_back(crd_map.get_coords(11));
+	setpoints.push_back(crd_map.get_coords(10));
+	setpoints.push_back(Coordinate(26.0114, 0.973));
 
 	PID controller = PID(current, setpoint, dKp, dKi, dKd, aKp, aKi, aKd, steer_out, throttle_out);
 
@@ -134,7 +133,19 @@ int main(){
 			// Get updated location info from shared mem
 			*current = pid_inputs->location;
 			*setpoint = setpoints.current_point();
-
+			Coordinate *nextpoint = new Coordinate(0,0);  
+			*nextpoint = setpoints.next_point(); 
+			double x2 = nextpoint->getX(); 
+			double y2 = nextpoint->getY(); 
+			double x1 = setpoint->getX(); 
+			double y1 = setpoint->getY();
+			double slope;  
+			if((x2-x1)==0){
+				slope = 0; 
+			} else {
+				slope = -(y2-y1)/(x2-x1);
+			}
+			double intercept = x1-slope*y1; 
 
 			// Compute output values:
 			controller.compute();
@@ -155,10 +166,11 @@ int main(){
 			}
 
 			// Switch point if within a half meter of the goal
-			if(controller.get_dst_err() <= 0.2){
+			if(controller.get_dst_err() <= 0.40 || controller.curr.getX() < slope*controller.curr.getY()+intercept ){
 				setpoints.pop_front();
 				*setpoint = setpoints.current_point();
 			}
+			
 
 			// Printout of results
 			cout << "Car: (" << controller.curr.getX() << ", " << controller.curr.getY() << ", " << controller.curr.getAngle() << ") ";
