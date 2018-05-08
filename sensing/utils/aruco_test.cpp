@@ -172,8 +172,8 @@ int main(int argc, char** argv) {
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
-        	ifstream f0('/dev/video0'.c_str());
-        	ifstream f1('/dev/vudeo1'.c_str());
+        	ifstream f0("/dev/video0");
+        	ifstream f1("/dev/vudeo1");
         	int vIdx;
         	if(f0){
         		vIdx = 0;
