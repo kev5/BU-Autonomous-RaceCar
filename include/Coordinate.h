@@ -46,7 +46,7 @@ public:
 	}
 
 	Coordinate(const Coordinate& coord){
-		this->x = coord.getY();
+		this->x = coord.getX();
 		this->y = coord.getY();
 		this->angle = coord.getAngle();
 		this->id = coord.getId();
