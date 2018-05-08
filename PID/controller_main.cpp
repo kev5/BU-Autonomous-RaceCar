@@ -97,7 +97,7 @@ int main(){
 	Setpoint_Queue setpoints = Setpoint_Queue();
 	setpoints.push_back(crd_map.get_coords(9));
 	setpoints.push_back(crd_map.get_coords(12));
-	setpoints.push_back(Coordinate(30.1042,-1.52545));
+	setpoints.push_back(Coordinate(30.1042, 1.52545));
 	setpoints.push_back(crd_map.get_coords(29));
 	setpoints.push_back(crd_map.get_coords(10));
 	setpoints.push_back(crd_map.get_coords(7));
