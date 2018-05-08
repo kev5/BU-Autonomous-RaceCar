@@ -56,6 +56,17 @@ CMAKE_BINARY_DIR = /home/nvidia/BU-Autonomous-RaceCar/sensing/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -67,6 +78,16 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -77,28 +98,6 @@ install/local: preinstall
 install/local/fast: install/local
 
 .PHONY : install/local/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: install/strip
-
-.PHONY : install/strip/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # Special rule for the target install
 install: preinstall
@@ -112,15 +111,16 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
+# Special rule for the target install/strip
+install/strip/fast: install/strip
 
-.PHONY : list_install_components/fast
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -170,6 +170,21 @@ aruco_simple_markermap/fast:
 .PHONY : aruco_simple_markermap/fast
 
 # Convenience name for target.
+utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
+.PHONY : utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
+
+# Convenience name for target.
+aruco_test_markermap: utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
+
+.PHONY : aruco_test_markermap
+
+# fast build rule for target.
+aruco_test_markermap/fast:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils_markermap/CMakeFiles/aruco_test_markermap.dir/build.make utils_markermap/CMakeFiles/aruco_test_markermap.dir/build
+.PHONY : aruco_test_markermap/fast
+
+# Convenience name for target.
 utils_markermap/CMakeFiles/aruco_create_markermap.dir/rule:
 	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils_markermap/CMakeFiles/aruco_create_markermap.dir/rule
 .PHONY : utils_markermap/CMakeFiles/aruco_create_markermap.dir/rule
@@ -198,21 +213,6 @@ aruco_markermap_pix2meters: utils_markermap/CMakeFiles/aruco_markermap_pix2meter
 aruco_markermap_pix2meters/fast:
 	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils_markermap/CMakeFiles/aruco_markermap_pix2meters.dir/build.make utils_markermap/CMakeFiles/aruco_markermap_pix2meters.dir/build
 .PHONY : aruco_markermap_pix2meters/fast
-
-# Convenience name for target.
-utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
-.PHONY : utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
-
-# Convenience name for target.
-aruco_test_markermap: utils_markermap/CMakeFiles/aruco_test_markermap.dir/rule
-
-.PHONY : aruco_test_markermap
-
-# fast build rule for target.
-aruco_test_markermap/fast:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils_markermap/CMakeFiles/aruco_test_markermap.dir/build.make utils_markermap/CMakeFiles/aruco_test_markermap.dir/build
-.PHONY : aruco_test_markermap/fast
 
 aruco_create_markermap.o: aruco_create_markermap.cpp.o
 
@@ -355,16 +355,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
-	@echo "... install/local"
-	@echo "... install/strip"
-	@echo "... aruco_simple_markermap"
 	@echo "... rebuild_cache"
+	@echo "... edit_cache"
+	@echo "... list_install_components"
+	@echo "... install/local"
+	@echo "... aruco_simple_markermap"
+	@echo "... aruco_test_markermap"
+	@echo "... install"
 	@echo "... aruco_create_markermap"
 	@echo "... aruco_markermap_pix2meters"
-	@echo "... install"
-	@echo "... list_install_components"
-	@echo "... aruco_test_markermap"
+	@echo "... install/strip"
 	@echo "... aruco_create_markermap.o"
 	@echo "... aruco_create_markermap.i"
 	@echo "... aruco_create_markermap.s"

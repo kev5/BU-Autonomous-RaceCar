@@ -168,19 +168,23 @@ int main(int argc, char** argv) {
         TheCameraParameters.readFromXMLFile("out_camera_calibration.yml");
 
         float TheMarkerSize = 0.205; 
+	std::map<uint32_t, MarkerPoseTracker> MTracker; 
 
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
         	ifstream f0("/dev/video0");
-        	ifstream f1("/dev/vudeo1");
+        	ifstream f1("/dev/video1");
+		ifstream f2("/dev/video2"); 
         	int vIdx;
         	if(f0){
         		vIdx = 0;
         	}
-        	else{
+        	else if(f1){
         		vIdx = 1;
-        	}
+        	}else if(f2){
+			vIdx = 2; 
+		}
             // check if the :idx is here
             char cad[100];
             if (TheInputVideo.find(":") != string::npos) {
@@ -222,7 +226,6 @@ int main(int argc, char** argv) {
 	    char key = 0;
         int index = 0,indexSave=0;
 
-	    // capture until press ESC or until the end of the video
         CoordinateMap* arucos = new CoordinateMap();
 
 	    do {
@@ -245,24 +248,35 @@ int main(int argc, char** argv) {
             }
 	 
 
+	    for (auto& marker : TheMarkers){  // for each marker
+                MTracker[marker.id].estimatePose(marker, TheCameraParameters, TheMarkerSize);  // call its tracker and estimate the pose 
+		}
 
             for (unsigned int i = 0; i < TheMarkers.size(); i++) {
 				// memory waits for the calculation
 				sem_wait(sem);
 
-				// calculate the extrinsics
-				TheMarkers[i].calculateExtrinsics(TheMarkerSize,TheCameraParameters,true);
+				// calculate the extrinsics			
+
+				//TheMarkers[i].calculateExtrinsics(TheMarkerSize,TheCameraParameters,true);
+				if (TheMarkers[i].id == 97){
+					i++; 
+				} else {
 
 				cv::Mat Tvec = TheMarkers[i].Tvec;
 				cv::Mat Rvec = TheMarkers[i].Rvec;
 		
 				//cout << Tvec.at<double>(0,0) << endl;
-                TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255),2,true);
+                		TheMarkers[i].draw(TheInputImageCopy, Scalar(0, 0, 255),2,true);
 		
 				// Matrix multiplication to get the global coordinate
 				cv::Mat R;
 				cv::Rodrigues(Rvec, R);
 				R = R.t();
+				Tvec = Tvec.t();
+				if(Tvec.rows == 1){
+					Tvec = Tvec.t(); 
+				} 
 				Tvec = -R * Tvec;
 				cv::Mat Rmat;
 				cv::Rodrigues(Rvec,Rmat);
@@ -282,18 +296,18 @@ int main(int argc, char** argv) {
 					z_angle = 0;
 				}
             
-                // Calculating current location based off of marker(s) seen
-                Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
-                cout << "Coordinate Map X" << marker_location.getX() << endl; 
-                cout << "Coordinate Map Y" << marker_location.getY() << endl; 
-                positionPtr->location.setX(marker_location.getX() + Tvec.at<float>(0,0)); 
-                // positionPtr->location.x = Tvec.at<float>(0,0);
-                positionPtr->location.setY(marker_location.getY() + Tvec.at<float>(2,0)); 
-		        // positionPtr->location.y = Tvec.at<float>(2,0);
-                positionPtr->location.setAngle(z_angle);
+                		// Calculating current location based off of marker(s) seen
+				Coordinate marker_location = arucos->get_coords(TheMarkers[i].id);
+                		cout << "Coordinate Map X" << marker_location.getX() << endl; 
+                		cout << "Coordinate Map Y" << marker_location.getY() << endl; 
+        			positionPtr->location.setX(marker_location.getX() + Tvec.at<float>(0,0)); 
+                		// positionPtr->location.x = Tvec.at<float>(0,0);
+                		positionPtr->location.setY(marker_location.getY() - Tvec.at<float>(1,0)); 
+		        	// positionPtr->location.y = Tvec.at<float>(2,0);
+                		positionPtr->location.setAngle(z_angle);
 				cout << "Marker ID = " << TheMarkers[i].id << endl; 
-                cout << "X Dist = " << Tvec.at<float>(0,0) << endl; 
-                cout << "Y Dist = " << Tvec.at<float>(2,0) << endl; 
+                		cout << "X Dist = " << Tvec.at<float>(0,0) << endl; 
+                		cout << "Y Dist = " << Tvec.at<float>(1,0) << endl; 
 				cout << "X Pos = " << positionPtr->location.getX() << endl;
 				cout << "Y Pos = " << positionPtr->location.getY() << endl;
 				cout << "Angle = " << positionPtr->location.getAngle() << endl;
@@ -301,6 +315,7 @@ int main(int argc, char** argv) {
 				//write the distance to memory at address 2000
 				sem_post(sem);
             }
+	}
 
             // draw a 3d cube in each marker if there is 3d info
 	    
@@ -365,6 +380,7 @@ int main(int argc, char** argv) {
     catch (std::exception& ex) {
         cout << "Exception :" << ex.what() << endl;
     }
+
 }
 
 

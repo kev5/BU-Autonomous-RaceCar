@@ -56,28 +56,16 @@ CMAKE_BINARY_DIR = /home/nvidia/BU-Autonomous-RaceCar/sensing/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
 
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
+.PHONY : rebuild_cache/fast
 
 # Special rule for the target list_install_components
 list_install_components:
@@ -88,17 +76,6 @@ list_install_components:
 list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: install/strip
-
-.PHONY : install/strip/fast
 
 # Special rule for the target install/local
 install/local: preinstall
@@ -111,16 +88,39 @@ install/local/fast: install/local
 
 .PHONY : install/local/fast
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
 
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
-.PHONY : rebuild_cache/fast
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: install/strip
+
+.PHONY : install/strip/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -155,21 +155,6 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-utils/CMakeFiles/aruco_simple.dir/rule:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_simple.dir/rule
-.PHONY : utils/CMakeFiles/aruco_simple.dir/rule
-
-# Convenience name for target.
-aruco_simple: utils/CMakeFiles/aruco_simple.dir/rule
-
-.PHONY : aruco_simple
-
-# fast build rule for target.
-aruco_simple/fast:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils/CMakeFiles/aruco_simple.dir/build.make utils/CMakeFiles/aruco_simple.dir/build
-.PHONY : aruco_simple/fast
-
-# Convenience name for target.
 utils/CMakeFiles/aruco_print_marker.dir/rule:
 	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_print_marker.dir/rule
 .PHONY : utils/CMakeFiles/aruco_print_marker.dir/rule
@@ -185,21 +170,6 @@ aruco_print_marker/fast:
 .PHONY : aruco_print_marker/fast
 
 # Convenience name for target.
-utils/CMakeFiles/aruco_test.dir/rule:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_test.dir/rule
-.PHONY : utils/CMakeFiles/aruco_test.dir/rule
-
-# Convenience name for target.
-aruco_test: utils/CMakeFiles/aruco_test.dir/rule
-
-.PHONY : aruco_test
-
-# fast build rule for target.
-aruco_test/fast:
-	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils/CMakeFiles/aruco_test.dir/build.make utils/CMakeFiles/aruco_test.dir/build
-.PHONY : aruco_test/fast
-
-# Convenience name for target.
 utils/CMakeFiles/aruco_print_dictionary.dir/rule:
 	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_print_dictionary.dir/rule
 .PHONY : utils/CMakeFiles/aruco_print_dictionary.dir/rule
@@ -213,6 +183,36 @@ aruco_print_dictionary: utils/CMakeFiles/aruco_print_dictionary.dir/rule
 aruco_print_dictionary/fast:
 	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils/CMakeFiles/aruco_print_dictionary.dir/build.make utils/CMakeFiles/aruco_print_dictionary.dir/build
 .PHONY : aruco_print_dictionary/fast
+
+# Convenience name for target.
+utils/CMakeFiles/aruco_simple.dir/rule:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_simple.dir/rule
+.PHONY : utils/CMakeFiles/aruco_simple.dir/rule
+
+# Convenience name for target.
+aruco_simple: utils/CMakeFiles/aruco_simple.dir/rule
+
+.PHONY : aruco_simple
+
+# fast build rule for target.
+aruco_simple/fast:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils/CMakeFiles/aruco_simple.dir/build.make utils/CMakeFiles/aruco_simple.dir/build
+.PHONY : aruco_simple/fast
+
+# Convenience name for target.
+utils/CMakeFiles/aruco_test.dir/rule:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f CMakeFiles/Makefile2 utils/CMakeFiles/aruco_test.dir/rule
+.PHONY : utils/CMakeFiles/aruco_test.dir/rule
+
+# Convenience name for target.
+aruco_test: utils/CMakeFiles/aruco_test.dir/rule
+
+.PHONY : aruco_test
+
+# fast build rule for target.
+aruco_test/fast:
+	cd /home/nvidia/BU-Autonomous-RaceCar/sensing/build && $(MAKE) -f utils/CMakeFiles/aruco_test.dir/build.make utils/CMakeFiles/aruco_test.dir/build
+.PHONY : aruco_test/fast
 
 # Convenience name for target.
 utils/CMakeFiles/aruco_tracker.dir/rule:
@@ -412,18 +412,18 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... aruco_simple"
-	@echo "... aruco_print_marker"
+	@echo "... rebuild_cache"
+	@echo "... list_install_components"
+	@echo "... install/local"
 	@echo "... install"
-	@echo "... aruco_test"
+	@echo "... install/strip"
+	@echo "... aruco_print_marker"
 	@echo "... aruco_print_dictionary"
+	@echo "... edit_cache"
+	@echo "... aruco_simple"
+	@echo "... aruco_test"
 	@echo "... aruco_tracker"
 	@echo "... aruco_batch_processing"
-	@echo "... edit_cache"
-	@echo "... list_install_components"
-	@echo "... install/strip"
-	@echo "... install/local"
-	@echo "... rebuild_cache"
 	@echo "... aruco_batch_processing.o"
 	@echo "... aruco_batch_processing.i"
 	@echo "... aruco_batch_processing.s"
