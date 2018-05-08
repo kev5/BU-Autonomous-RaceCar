@@ -159,9 +159,10 @@ int main(){
 			}
 
 			// Printout of results
-			cout << "Car: (" << current->getX() << ", " << current->getY() << ", " << current->getAngle() << ") ";
+			cout << "Car: (" << controller.curr.getX() << ", " << controller.curr.getY() << ", " << controller.curr.getAngle() << ") ";
 			cout << "Set: (" << setpoint->getX() << ", " << setpoint->getY() << ") ";
-			cout << "ERR: (" << controller.get_dst_err() << " m., " << controller.get_ang_err() << " Rads.)";
+			cout << "*SET*: (" << controller.set_prime.getX() << ", " << controller.set_prime.getY() << ", " << controller.set_prime.getAngle() << ") ";
+			cout << "ERR: (" << controller.get_dst_err() << " m., " << controller.get_ang_err() << " Rads.) ";
 			cout << "Out: (" << *throttle_out << ", " << *steer_out << ")" << endl;
 		}
 

@@ -45,6 +45,13 @@ public:
 		this->id = id;
 	}
 
+	Coordinate(const Coordinate& coord){
+		this->x = coord.getY();
+		this->y = coord.getY();
+		this->angle = coord.getAngle();
+		this->id = coord.getId();
+	}
+
 	double getX() const {
 		return x;
 	}
@@ -75,6 +82,20 @@ public:
 
 	void setId(int id) {
 		this->id = id;
+	}
+
+	Coordinate operator -(const Coordinate& other) {
+		Coordinate result = Coordinate();
+		result.setX(this->getX() - other.getX());
+		result.setY(this->getY() - other.getY());
+		return result;
+	}
+
+	Coordinate operator +(const Coordinate& other){
+		Coordinate result = Coordinate();
+		result.setX(this->getX() + other.getX());
+		result.setY(this->getY() + other.getY());
+		return result;
 	}
 
 private:

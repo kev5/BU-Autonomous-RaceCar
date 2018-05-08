@@ -82,6 +82,9 @@ public:
 	double get_dst_err();
 	double get_ang_err();
 
+	Coordinate curr;
+	Coordinate set_prime;
+
 private:
 
 	/* Internal Functions for error calculations etc. */
@@ -113,6 +116,7 @@ private:
 	// Input, output and shared_position
 	Coordinate *current; // Current coordinate of unit
 	Coordinate *setpoint; // Current goal destination point
+
 	double *steer_out;
 	double *throttle_out; // Corrective Output from PID Controller
 

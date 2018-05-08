@@ -52,8 +52,8 @@ void PID::compute() {
 		return;
 
 	// Copying prevents modifying pointers to shared mem coordinates
-	Coordinate curr_t = Coordinate(current->getX(),current->getY(),current->getAngle());
-	Coordinate set_prime = Coordinate(setpoint->getX() - curr_t.getX(),setpoint->getY() - curr_t.getY());
+	curr = Coordinate(current->getX(),current->getY(),current->getAngle());
+	set_prime = *setpoint - curr;
 	double ang_err_t, dst_err_t;
 
 	// Converting Set-point angle to polar:
@@ -61,19 +61,19 @@ void PID::compute() {
 	set_prime.setAngle((set_prime.getAngle() >=0) ? set_prime.getAngle() : PI + abs(set_prime.getAngle())); // [0, 2PI]
 
 	// Converting car's angle to polar:
-	if(!sign(curr_t.getAngle())){
+	if(!sign(curr.getAngle())){
 		// ~Quad II and III:
-		curr_t.setAngle(abs(curr_t.getAngle()) + (PI/2));
-	} else if (sign(curr_t.getAngle()) && (curr_t.getAngle() <= (PI/2))){
+		curr.setAngle(abs(curr.getAngle()) + (PI/2));
+	} else if (sign(curr.getAngle()) && (curr.getAngle() <= (PI/2))){
 		// ~Quad I:
-		curr_t.setAngle(((PI/2) - curr_t.getAngle()));
+		curr.setAngle(((PI/2) - curr.getAngle()));
 	}else{
 		// ~Quad IV:
-		curr_t.setAngle((5*PI/2)- curr_t.getAngle());
+		curr.setAngle((5*PI/2)- curr.getAngle());
 	}
 
 	// Calculating angular error, correcting for values over 180 degrees (PI radians):
-	ang_err_t = curr_t.getAngle() - set_prime.getAngle();
+	ang_err_t = curr.getAngle() - set_prime.getAngle();
 	if(abs(ang_err_t) > PI){
 		ang_err_t = ang_err_t + (sign(ang_err_t) ? (-2*PI) :  (2*PI));
 	}
@@ -87,8 +87,8 @@ void PID::compute() {
 	ang_err = ang_err_t;
 
 	// Computing Difference between this time & last
-	ang_dif = abs(curr_t.getAngle() - lastin.getAngle());
-	dst_dif = euclidean_dist(curr_t, lastin);
+	ang_dif = abs(curr.getAngle() - lastin.getAngle());
+	dst_dif = euclidean_dist(curr, lastin);
 
 	// Compute Integral values, enforce that they're within bounds
 	ang_int += aKi * ang_err;
@@ -105,7 +105,7 @@ void PID::compute() {
 
 	// Keep track of some values for next calculation
 	lasttime = clock();
-	lastin = curr_t;
+	lastin = curr;
 }
 
 void PID::tune(double dKp_in, double dKi_in, double dKd_in, double aKp_in, double aKi_in, double aKd_in) {
