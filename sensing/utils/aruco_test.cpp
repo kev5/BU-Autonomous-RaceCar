@@ -37,6 +37,7 @@ or implied, of Rafael Muñoz Salinas.
 #include <sys/types.h>
 #include <fcntl.h>
 #include <semaphore.h>
+#include <string>
 #include "/home/nvidia/BU-Autonomous-RaceCar/include/pid_params.h"
 #include "/home/nvidia/BU-Autonomous-RaceCar/include/CoordinateMap.h"
 
@@ -171,7 +172,15 @@ int main(int argc, char** argv) {
         ///////////  OPEN VIDEO
         // read from camera or from  file
         if (TheInputVideo.find("live") != string::npos) {
-            int vIdx = 1;
+        	ifstream f0('/dev/video0'.c_str());
+        	ifstream f1('/dev/vudeo1'.c_str());
+        	int vIdx;
+        	if(f0){
+        		vIdx = 0;
+        	}
+        	else{
+        		vIdx = 1;
+        	}
             // check if the :idx is here
             char cad[100];
             if (TheInputVideo.find(":") != string::npos) {
