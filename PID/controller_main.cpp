@@ -127,6 +127,7 @@ int main(){
 		if(setpoints.is_empty()){
 			actuation_vals->throttle = 0;
 			actuation_vals->steer = 0;
+			sem_post(servo_sem);
 			exit(1);
 		}
 		else{
