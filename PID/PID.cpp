@@ -58,7 +58,7 @@ void PID::compute() {
 
 	// Converting Set-point angle to polar:
 	set_prime.setAngle(atan2(set_prime.getY(),set_prime.getX())); // Returns in range -[PI , PI] (WRT. X+)
-	set_prime.setAngle((set_prime.getAngle() >=0) ? set_prime.getAngle() : 2PI - abs(set_prime.getAngle())); // [0, 2PI]
+	set_prime.setAngle((set_prime.getAngle() >=0) ? set_prime.getAngle() : 2*PI - abs(set_prime.getAngle())); // [0, 2PI]
 
 	// Converting car's angle to polar:
 	if(!sign(curr.getAngle())){

@@ -77,19 +77,8 @@ public:
 		this->id = id;
 	}
 
-	Coordinate operator -(const Coordinate& other) {
-		Coordinate result = Coordinate();
-		result.setX(this->getX() - other.getX());
-		result.setY(this->getY() - other.getY());
-		return result;
-	}
-
-	Coordinate operator +(const Coordinate& other){
-		Coordinate result = Coordinate();
-		result.setX(this->getX() + other.getX());
-		result.setY(this->getY() + other.getY());
-		return result;
-	}
+	friend Coordinate operator-(const Coordinate& first, const Coordinate& second);
+	friend Coordinate operator+(const Coordinate& first, const Coordinate& second);
 
 private:
 	double x;
@@ -97,6 +86,14 @@ private:
 	double angle;
 	int id;
 };
+
+Coordinate operator-(const Coordinate& first, const Coordinate& second){
+	return Coordinate(first.getX()-second.getX(), first.getY()-second.getY());
+}
+
+Coordinate operator+(const Coordinate& first, const Coordinate& second){
+	return Coordinate(first.getX()+second.getX(), first.getY()+second.getY());
+}
 
 
 #endif //PID_COORDINATE_H
